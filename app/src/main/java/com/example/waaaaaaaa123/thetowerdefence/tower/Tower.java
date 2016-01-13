@@ -1,6 +1,9 @@
 package com.example.waaaaaaaa123.thetowerdefence.tower;
 
 import android.graphics.Point;
+import android.graphics.PointF;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.Log;
 
 import com.example.waaaaaaaa123.thetowerdefence.block.Block;
@@ -19,13 +22,16 @@ public class Tower {
     private int attackSpeed=5;
     private long attackTime=0;
     private int castPoint;
-    private Point point;
+    private RectF rect;
+    private PointF point;
     private Enemy target;
     private static Wave wave;
     private Projectile projectile;
     private static ProjectileManager projectileManager;
-    public Tower(Block block){
-        point=new Point(block.getPoint());
+    public Tower(RectF rect){
+        point=new PointF(rect.centerX(),rect.centerY());
+        this.rect=new RectF(rect);
+
         setRange();
     }
 
@@ -33,9 +39,6 @@ public class Tower {
         Tower.projectileManager = projectileManager;
     }
 
-    public void setPoint(Point point) {
-        this.point = point;
-    }
 
     public int getId() {
         return id;
@@ -53,13 +56,17 @@ public class Tower {
         this.projectile = projectile;
     }
 
-    public Point getPoint() {
+    public PointF getPoint() {
         return point;
     }
 
+    public RectF getRect() {
+        return rect;
+    }
+
     public boolean isInRange(Enemy enemy){
-        int dx=point.x-enemy.getPoint().x;
-        int dy=point.y-enemy.getPoint().y;
+        float dx=point.x-enemy.getPoint().x;
+        float dy=point.y-enemy.getPoint().y;
         if(range*range>=dx*dx+dy*dy)
             return true;
         else
@@ -69,7 +76,7 @@ public class Tower {
         }
     }
     public void findTarget(){
-        if(target==null||!isInRange(target)){
+        if(target==null||target.getState()==Enemy.STATE_DEAD||!isInRange(target)){
             for(Enemy enemy:wave){
                 if(enemy.getState()==Enemy.STATE_ALIVE){
                     if(isInRange(enemy)){
@@ -78,6 +85,7 @@ public class Tower {
                     }
                 }
             }
+            target=null;
         }
     }
 

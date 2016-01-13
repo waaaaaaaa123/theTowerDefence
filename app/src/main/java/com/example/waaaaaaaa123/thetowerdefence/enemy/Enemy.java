@@ -1,8 +1,10 @@
 package com.example.waaaaaaaa123.thetowerdefence.enemy;
 
-import android.graphics.Point;
+import android.graphics.PointF;
+import android.graphics.RectF;
+import android.util.Log;
 
-import com.example.waaaaaaaa123.thetowerdefence.util.Vec;
+import com.example.waaaaaaaa123.thetowerdefence.projectile.Projectile;
 
 import java.util.ArrayList;
 
@@ -17,19 +19,23 @@ public class Enemy {
 
     private int id=0;
     private float speed=3;
+    private float hp=100;
     private int bound=1;
 
-    private Vec forward;
-    private Vec pVec;
-    private Point point;
-    private Point nextPoint;
-    private ArrayList<Point> path;
+    private PointF forward;
+    private RectF rect;
+    private PointF point;
+    private PointF nextPoint;
+    private ArrayList<PointF> path;
     private float lengthToNextPath;
     private int it;
     private int state=STATE_NOTSPAWN;
 
-    public Enemy(ArrayList<Point> path){
-        setPath(path);
+    public Enemy(){
+        rect=new RectF(-25,-25,25,25);
+        point=new PointF();
+        forward=new PointF();
+
     }
 
     public void setState(int state) {
@@ -48,71 +54,83 @@ public class Enemy {
         return bound;
     }
 
-    public Point getPoint() {
-        point.x= (int) pVec.x;
-        point.y= (int) pVec.y;
+    public PointF getPoint() {
+
         return point;
     }
 
-    public void setSpeed(int blockLength) {
+    public RectF getRect() {
+        rect.offsetTo(point.x-rect.width()/2,point.y-rect.height()/2);
+        return rect;
+    }
+
+    public void setSpeed(float blockLength) {
         speed*=blockLength;
     }
 
-    public void setPath(ArrayList<Point> path) {
+    public void setPath(ArrayList<PointF> path) {
         this.path = path;
-        point=new Point(path.get(0));
-        pVec=new Vec(point);
+
+        point.set(path.get(0));
+
         nextPoint=path.get(1);
         setForward();
         it=1;
     }
 
     public void setForward() {
-
-        if(nextPoint==null)
-        {
-            forward=null;
-            return;
-        }
-        double dx=nextPoint.x-pVec.x;
-        double dy=nextPoint.y-pVec.y;
+        double dx=nextPoint.x-point.x;
+        double dy=nextPoint.y-point.y;
         double dl=Math.sqrt(dx*dx+dy*dy);
         dx/=dl;
         dy/=dl;
-        forward=new Vec();
+
         forward.x=(float)dx;
         forward.y=(float)dy;
         lengthToNextPath=(float)dl;
     }
     private void move(long dt){
 
-        if(forward==null|| pVec.equals(nextPoint))
-        {
-            if(it<path.size())
-                nextPoint=path.get(it++);
-            else
-            nextPoint=null;
-            setForward();
-        }
-
-        if(forward!=null){
             float l=  (speed*dt/1000);
 
-            if( l>lengthToNextPath){
-                pVec.setVec(nextPoint);
-                move((long) (dt-lengthToNextPath/speed*1000));
+            if( l>=lengthToNextPath){
+                point.set(nextPoint);
+                if(it+1<path.size())
+                {
+                    nextPoint=path.get(++it);
+                    long dtt=(long) (dt - lengthToNextPath / speed * 1000);
+                    setForward();
+                    move(dtt);
+                }
+                else
+                {
+                    state=STATE_DEAD;
+                }
+
             }
             else{
-                pVec.x+=l*forward.x;
-                pVec.y+=l*forward.y;
+                point.x+=l*forward.x;
+                point.y+=l*forward.y;
                 lengthToNextPath-=l;
             }
 
-        }
+
 
     }
     public void update(long dt){
      move(dt);
     }
 
+    public float getHpPercent() {
+        return hp/100;
+    }
+
+    public void attackLanded(Projectile projectile){
+        hp-=projectile.getDamage();
+        if(hp<=0)
+        {
+            hp=0;
+            state=STATE_DEAD;
+        }
+    }
 }

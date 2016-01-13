@@ -1,8 +1,11 @@
 package com.example.waaaaaaaa123.thetowerdefence.enemy;
 
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.util.Log;
 
+import com.example.waaaaaaaa123.thetowerdefence.block.Block;
+import com.example.waaaaaaaa123.thetowerdefence.block.Grid;
 import com.example.waaaaaaaa123.thetowerdefence.enemy.Enemy;
 
 import java.util.ArrayList;
@@ -14,16 +17,26 @@ import java.util.Iterator;
 public class Wave implements Iterable<Enemy> {
     private int id;
     private ArrayList<Enemy> enemies;
-    private ArrayList<Point> path;
+    private ArrayList<PointF> path;
     private int spawnSpeed=1;
     private long lastSpawnTime=0;
     private int spawnCount=0;
-    public Wave(){
+    private static Grid grid;
+    public Wave(int id){
+        this.id=id;
         enemies=new ArrayList<Enemy>();
+
+    }
+
+    public static void setGrid(Grid grid) {
+        Wave.grid = grid;
+
     }
 
     public void init(){
-
+        switch (id){
+            case 0:path=grid.buildPath(0,0,8,5,1);break;
+        }
     }
     public void update(long dt){
 
@@ -50,13 +63,21 @@ public class Wave implements Iterable<Enemy> {
         }
 
     }
-    public void setPath(ArrayList<Point> path) {
-        this.path = path;
+
+    public ArrayList<PointF> getPath() {
+        return path;
     }
 
+    public void addEnemy(int num){
 
-    public void addEnemy(Enemy e){
-        enemies.add(e);
+        for(int i=0;i<num;i++){
+            Enemy e=new Enemy();
+            e.setSpeed(grid.getLength());
+            e.setPath(path);
+            enemies.add(e);
+        }
+
+
     }
 
     @Override

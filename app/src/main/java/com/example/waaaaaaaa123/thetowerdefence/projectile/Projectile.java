@@ -1,12 +1,11 @@
 package com.example.waaaaaaaa123.thetowerdefence.projectile;
 
-import android.graphics.Point;
-import android.util.Log;
+import android.graphics.PointF;
+import android.graphics.RectF;
 
 import com.example.waaaaaaaa123.thetowerdefence.block.Grid;
 import com.example.waaaaaaaa123.thetowerdefence.enemy.Enemy;
 import com.example.waaaaaaaa123.thetowerdefence.tower.Tower;
-import com.example.waaaaaaaa123.thetowerdefence.util.Vec;
 
 /**
  * Created by aa081_000 on 2016/1/7.
@@ -19,19 +18,19 @@ public class Projectile {
     private int id;
     private Tower caster;
     private Enemy target;
-    private Point point;
-    private Vec pVec;
-    private Vec forward;
-    private int speed=5;
-    private float size=1;
+    private PointF point;
+    private PointF forward;
+    private float speed=5;
+    private float damage=10;
+    private RectF rect;
     private int state=STATE_ALIVE;
     public Projectile(Tower caster,Enemy target){
         this.caster=caster;
         this.target=target;
-
-        point=new Point(caster.getPoint());
-        pVec=new Vec(point);
-        forward=new Vec();
+        rect=new RectF(-10,-10,10,10);
+        point=new PointF();
+        point.set(caster.getPoint());
+        forward=new PointF();
         setSpeed();
 
     }
@@ -41,8 +40,6 @@ public class Projectile {
 
         point.x=caster.getPoint().x;
         point.y=caster.getPoint().y;
-        pVec.x=point.x;
-        pVec.y=point.y;
         setSpeed();
         state=STATE_ALIVE;
     }
@@ -50,9 +47,7 @@ public class Projectile {
         speed=5* Grid.getLength();
     }
 
-    public int getSize() {
-        return (int) (size*Grid.getLength());
-    }
+
 
     public int getState() {
         return state;
@@ -62,10 +57,22 @@ public class Projectile {
         return id;
     }
 
-    public Point getPoint() {
-        point.x= (int) pVec.x;
-        point.y= (int) pVec.y;
+    public RectF getRect() {
+        rect.offsetTo(point.x-rect.width()/2,point.y-rect.height()/2);
+        return rect;
+    }
+
+    public PointF getPoint() {
+
         return point;
+    }
+
+    public float getDamage() {
+        return damage;
+    }
+
+    public void setDamage(float damage) {
+        this.damage = damage;
     }
 
     public boolean isHit(int l){
@@ -74,23 +81,23 @@ public class Projectile {
         double dl=Math.sqrt(dx*dx+dy*dy);
         forward.x= (float) (dx/dl);
         forward.y= (float) (dy/dl);
-        return l>dl;
+        return l>=dl;
     }
     public void move(long dt){
 
         int l= (int) (speed*dt/1000);
 
         if (isHit(l)){
+            target.attackLanded(this);
             state=STATE_DEAD;
         }
         else{
-            pVec.x+=l*forward.x;
-            pVec.y+=l*forward.y;
+            point.x+=l*forward.x;
+            point.y+=l*forward.y;
         }
 
     }
     public void update(long dt){
-        if(state==STATE_DEAD)return;
         move(dt);
     }
 }

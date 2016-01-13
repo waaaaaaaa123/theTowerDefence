@@ -1,10 +1,9 @@
 package com.example.waaaaaaaa123.thetowerdefence.block;
 
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.graphics.Rect;
-import android.util.Log;
-
-import com.example.waaaaaaaa123.thetowerdefence.util.Count;
+import android.graphics.RectF;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,41 +16,57 @@ public class Grid implements Iterable<Block>{
 
 
     private ArrayList<Block> blocks;
-    private ArrayList<Count> starts;
-    private Count end;
-    private static int length;
+    private ArrayList<Point> starts;
+    private Point end;
+    private static float length;
+    private RectF rect;
     private int xSize,ySize;
-    public Grid(Rect rect,int xSize,int ySize){
+    public Grid(RectF rect,int xSize,int ySize){
         this.xSize=xSize;
         this.ySize=ySize;
+        this.rect=rect;
         blocks=new ArrayList<Block>();
-        starts=new ArrayList<Count>();
+        starts=new ArrayList<Point>();
 
         length=Math.min(rect.width()/xSize,rect.height()/ySize);
-        int x;
-        int y=rect.top+length/2;
+        float left;
+        float top=rect.top;
         for(int i=0;i<ySize;i++) {
 
-            x=rect.left+length/2;
+            left=rect.left;
             for (int j = 0; j < xSize; j++) {
-                blocks.add(new Block(x,y));
-                x+=length;
+                blocks.add(new Block(new RectF(left,top,left+length,top+length)));
+                left+=length;
             }
-            y+=length;
+            top+=length;
         }
     }
     public Block getBlock(int xCount,int yCount){
         if(xCount<xSize&&xCount>=0&&yCount<ySize&&yCount>=0)
-        return blocks.get(xSize*yCount+xCount);
+            return blocks.get(xSize*yCount+xCount);
         else
-        return null;
+            return null;
     }
+public Block getBlock(float x,float y){
+    if(rect.contains(x,y)){
+        for(Block block:blocks)
+        {
+            if(block.getRect().contains(x,y))
+                return block;
+        }
+    }
+    return null;
+}
+    public RectF getRect() {
+        return rect;
+    }
+
     public void setBlockId(int xCount,int yCount,int id){
 
         Block block=getBlock(xCount,yCount);
         if(block!=null){
             block.setId(id);
-            Count count=new Count(xCount,yCount);
+            Point count=new Point(xCount,yCount);
             switch (id){
                 case 2:starts.add(count);break;
                 case 3:end=count;break;
@@ -60,76 +75,17 @@ public class Grid implements Iterable<Block>{
 
     }
 
-    /*class DijkstraSP{
-        private int[] edgeTo;
-        private int[] distTo;
-        private int bound;
-        class BlockDist implements Comparable<BlockDist>{
-
-            public int blockIndex;
-            public int dist;
-            public BlockDist(int blockIndex,int dist){
-                this.blockIndex=blockIndex;
-                this.dist=dist;
-            }
-            @Override
-            public int compareTo(BlockDist another) {
-                if(dist<another.dist)return -1;
-                else if(dist>another.dist) return 1;
-                else return 0;
-            }
-
-        }
-        private PriorityQueue<BlockDist> pq;
-        public DijkstraSP(ArrayList<Block> G,int s){
-            edgeTo=new int[G.size()];
-            distTo=new int[G.size()];
-            pq=new PriorityQueue<BlockDist>(G.size());
-            for(int v=0;v<G.size();v++){
-                distTo[v]=Integer.MAX_VALUE;
-            }
-            distTo[s]=0;
-            pq.add(new BlockDist(s,0));
-            while(!pq.isEmpty()){
-                relax(G,pq.poll().dist);
-            }
-        }
-        private void relax(ArrayList<Block> G,int v){
-            if(G.get(v).getId()!=0)
-                return;
-            int yCount=v/xSize;
-            int xCount=v-yCount*xSize;
-            for(int i=-bound;i<=bound;i++)
-                for(int j=bound-Math.abs(i);j>=0;j++)
-                {
-                    int x=xCount+i;
-                    int y=yCount+j;
-                    Block b=getBlock(x,y);
-                    if(b!=null){
-                        if(b.getId()==0){
-                            int w=G.indexOf(b);
-                            if(distTo[w]>distTo[v]+1){
-                                distTo[w]=distTo[v]+1;
-                                edgeTo[w]=v;
-                                if(pq.contains(w)) ;
-                            }
-                        }
-                    }
-                }
-
-        }
-    }*/
 
     class PathBuilder{
         private int[][] m;
-        private Count[][] from;
-        private Count start,end;
+        private Point[][] from;
+        private Point start,end;
         private int bound;
-        private LinkedList<Count> list;
-        PathBuilder(Count start,Count end,int bound){
+        private LinkedList<Point> list;
+        PathBuilder(Point start,Point end,int bound){
             m=new int[ySize][xSize];
-            from=new Count[ySize][xSize];
-            list=new LinkedList<Count>();
+            from=new Point[ySize][xSize];
+            list=new LinkedList<Point>();
             this.bound=bound;
             this.start=start;
             this.end=end;
@@ -146,35 +102,35 @@ public class Grid implements Iterable<Block>{
                 }
             }
 
-            m[start.yCount][start.xCount]=0;
+            m[start.y][start.x]=0;
             list.add(start);
             relax();
 
     }
-        public ArrayList<Point> getPath(){
-            if(from[end.yCount][end.xCount]==null)return null;
-            ArrayList<Point> path=new ArrayList<Point>(m[end.yCount][end.xCount]+1);
-            for(Count c=end;c!=null;c=from[c.yCount][c.xCount]){
-                path.add(0,getBlock(c.xCount,c.yCount).getPoint());
+        public ArrayList<PointF> getPath(){
+            if(from[end.y][end.x]==null)return null;
+            ArrayList<PointF> path=new ArrayList<PointF>(m[end.y][end.x]+1);
+            for(Point c=end;c!=null;c=from[c.y][c.x]){
+                path.add(0,getBlock(c.x,c.y).getCenter());
             }
             return path;
         }
         private void relax(){
             while(!list.isEmpty())
             {
-                    Count c=list.poll();
-                    for(int x=c.xCount+bound;x>=c.xCount-bound;x--){
+                    Point c=list.poll();
+                    for(int x=c.x+bound;x>=c.x-bound;x--){
                         if(x<0||x>=xSize) continue;
-                        int yBound=bound-(x<c.xCount?c.xCount-x:x-c.xCount);
-                        for(int y=c.yCount+yBound;y>=c.yCount-yBound;y--){
+                        int yBound=bound-(x<c.x?c.x-x:x-c.x);
+                        for(int y=c.y+yBound;y>=c.y-yBound;y--){
                             if(y<0||y>=ySize) continue;;
-                            if(x==c.xCount&&y==c.yCount)continue;
-                            if(m[y][x]>m[c.yCount][c.xCount]+1){
-                                m[y][x]=m[c.yCount][c.xCount]+1;
+                            if(x==c.x&&y==c.y)continue;
+                            if(m[y][x]>m[c.y][c.x]+1){
+                                m[y][x]=m[c.y][c.x]+1;
                                 from[y][x]=c;
-                                if(x==end.xCount&&y==end.yCount)
+                                if(x==end.x&&y==end.y)
                                     return;
-                                Count newCount=new Count(x,y);
+                                Point newCount=new Point(x,y);
                                 int index=list.indexOf(newCount);
                                 //if(index!=-1)
                                 list.add(newCount);
@@ -187,14 +143,11 @@ public class Grid implements Iterable<Block>{
         }
     }
 
-    public ArrayList<Point>buildPath(int xStart,int yStart,int xEnd,int yEnd,int bound){
-        ArrayList<Point> path=new ArrayList<Point>();
-
-            PathBuilder pathBuilder = new PathBuilder(new Count(xStart,yStart), new Count(xEnd,yEnd), bound);
-
+    public ArrayList<PointF>buildPath(int xStart,int yStart,int xEnd,int yEnd,int bound){
+            PathBuilder pathBuilder = new PathBuilder(new Point(xStart,yStart), new Point(xEnd,yEnd), bound);
         return pathBuilder.getPath();
     }
-    public static int getLength() {
+    public static float getLength() {
         return length;
     }
 

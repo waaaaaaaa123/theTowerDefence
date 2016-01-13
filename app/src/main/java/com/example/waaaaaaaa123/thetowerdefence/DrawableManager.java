@@ -3,14 +3,18 @@ package com.example.waaaaaaaa123.thetowerdefence;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
 import com.example.waaaaaaaa123.thetowerdefence.block.Block;
 import com.example.waaaaaaaa123.thetowerdefence.block.Grid;
 import com.example.waaaaaaaa123.thetowerdefence.enemy.Enemy;
 import com.example.waaaaaaaa123.thetowerdefence.enemy.Wave;
+import com.example.waaaaaaaa123.thetowerdefence.item.Item;
 import com.example.waaaaaaaa123.thetowerdefence.projectile.Projectile;
 import com.example.waaaaaaaa123.thetowerdefence.projectile.ProjectileManager;
 import com.example.waaaaaaaa123.thetowerdefence.tower.Tower;
@@ -23,8 +27,9 @@ import java.util.HashMap;
  */
 public class DrawableManager {
     private Context context;
+    private Player player;
     private HashMap<Integer,Drawable> blockPaints;
-    private int blockLength;
+    private float blockLength;
     private Grid grid;
     private HashMap<Integer,Drawable> enemyPaints;
     private HashMap<Integer,Rect> enemyRects;
@@ -34,8 +39,9 @@ public class DrawableManager {
     private HashMap<Integer,Drawable> projectilePaints;
 
     private Wave wave;
-    public DrawableManager(Context context,Grid grid,TowerManager towerManager,ProjectileManager projectileManager){
+    public DrawableManager(Context context,Player player,Grid grid,TowerManager towerManager,ProjectileManager projectileManager){
         this.context=context;
+        this.player=player;
         this.grid=grid;
         this.towerManager=towerManager;
         this.projectileManager=projectileManager;
@@ -53,12 +59,13 @@ public class DrawableManager {
 
     public void setWave(Wave wave) {
         this.wave = wave;
-        blockPaints.put(0,context.getResources().getDrawable(R.drawable.block));
-        blockPaints.put(1,context.getResources().getDrawable(R.drawable.build));
-        enemyPaints.put(0,context.getResources().getDrawable(R.drawable.dummy));
-        enemyRects.put(0,new Rect(0,0,50,50));
-        towerPaints.put(0,context.getResources().getDrawable(R.drawable.tower));
-        projectilePaints.put(0,context.getResources().getDrawable(R.drawable.projectile));
+        blockPaints.put(0, context.getResources().getDrawable(R.drawable.block));
+        blockPaints.put(1, context.getResources().getDrawable(R.drawable.build));
+        blockPaints.put(2, context.getResources().getDrawable(R.drawable.build));
+        enemyPaints.put(0, context.getResources().getDrawable(R.drawable.dummy));
+        enemyRects.put(0, new Rect(0, 0, 50, 50));
+        towerPaints.put(0, context.getResources().getDrawable(R.drawable.tower));
+        projectilePaints.put(0, context.getResources().getDrawable(R.drawable.projectile));
     }
 
     public void draw(Canvas canvas){
@@ -67,72 +74,110 @@ public class DrawableManager {
         drawTower(canvas);
         drawEnemy(canvas);
         drawProjectile(canvas);
+        drawPlayer(canvas);
     }
     public void drawBackground(Canvas canvas){
         canvas.drawColor(Color.WHITE);
     }
+    public void drawPlayer(Canvas canvas){
+        Paint paint=new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setTextSize(35);;
+        Paint.FontMetrics fontMetrics=paint.getFontMetrics();
+        float f=fontMetrics.bottom-fontMetrics.top;
+        canvas.drawText("GOLD " + player.getGold(), player.getTopRect().left, player.getTopRect().top + f, paint);
+        canvas.drawText("HP " + player.getHp(), player.getTopRect().left, player.getTopRect().top + f * 2, paint);
+
+
+        Drawable drawable=context.getResources().getDrawable(R.drawable.tower);
+        Rect rect=new Rect();
+        for(Item item:player){
+            //drawable=.get(item.getId());
+            if(drawable!=null){
+                if(item.isShowRange()){
+                    if(item.isUseable())
+                        paint.setColor(Color.GREEN);
+                    else
+                        paint.setColor(Color.RED);
+                    paint.setAlpha(64);
+                    canvas.drawCircle(item.getRect().centerX(),item.getRect().centerY(),item.getRange(),paint);
+                }
+                item.getRect().round(rect);
+                drawable.setBounds(rect);
+                drawable.draw(canvas);
+            }
+        }
+    }
     public void drawBlock(Canvas canvas){
         Drawable drawable;
-        int left,right;
+        Rect rect=new Rect();
         for(Block block:grid){
            drawable=blockPaints.get(block.getId());
 
             if(drawable!=null){
-                Point point=block.getPoint();
-                left=(blockLength-1)/2;
-                right=left%2==0?left:left+1;
-                drawable.setBounds(point.x-left,point.y-left,point.x+right,point.y+right);
+                block.getRect().round(rect);
+                drawable.setBounds(rect);
                 drawable.draw(canvas);
             }
         }
     }
     public void drawEnemy(Canvas canvas){
         Drawable drawable;
-        Rect rect;
-        int leftWidth,rightWidth,topHeight,bottomHeight;
+        Rect rect=new Rect();
+
+        Paint p1=new Paint();
+        Paint p2=new Paint();
+        Paint p3=new Paint();
+        p1.setColor(Color.BLACK);
+        p2.setColor(Color.RED);
+        p3.setColor(Color.GREEN);
+        RectF hpbar=new RectF();
+
+        for(PointF pointF:wave.getPath()){
+            canvas.drawCircle(pointF.x,pointF.y,10,p3);
+        }
+
         for(Enemy enemy:wave){
-            if(enemy.getState()>Enemy.STATE_NOTSPAWN){
+            if(enemy.getState()==Enemy.STATE_ALIVE){
             drawable=enemyPaints.get(enemy.getId());
             if(drawable!=null){
-                rect=enemyRects.get(enemy.getId());
-                Point point=enemy.getPoint();
-                leftWidth=(rect.width()-1)/2;
-                rightWidth=leftWidth%2==0?leftWidth:leftWidth+1;
-                topHeight=(rect.height()-1)/2;
-                bottomHeight=topHeight%2==0?topHeight:topHeight+1;
-                drawable.setBounds(point.x - leftWidth, point.y - topHeight, point.x + rightWidth, point.y + bottomHeight);
+                enemy.getRect().round(rect);
+                drawable.setBounds(rect);
                 drawable.draw(canvas);
+
+                hpbar.set(rect.left, rect.top - 20, rect.right, rect.top - 10);
+                canvas.drawRect(hpbar, p1);
+                hpbar.set(hpbar.left + 3, hpbar.top +3, hpbar.right - 3, hpbar.bottom - 3);
+                canvas.drawRect(hpbar, p2);
+                hpbar.set(hpbar.left,hpbar.top,hpbar.left+enemy.getHpPercent()* hpbar.width(),hpbar.bottom);
+                canvas.drawRect(hpbar,p3);
             }
         }
         }
     }
     public void drawTower(Canvas canvas){
         Drawable drawable;
-        int left,right;
+        Rect rect=new Rect();
         for(Tower tower:towerManager){
             drawable=towerPaints.get(tower.getId());
 
             if(drawable!=null){
-                Point point=tower.getPoint();
-                left=(blockLength-1)/2;
-                right=left%2==0?left:left+1;
-                drawable.setBounds(point.x-left,point.y-left,point.x+right,point.y+right);
+                tower.getRect().round(rect);
+                drawable.setBounds(rect);
                 drawable.draw(canvas);
             }
         }
     }
     public void drawProjectile(Canvas canvas){
         Drawable drawable;
-        int left,right;
+        Rect rect=new Rect();
         for(Projectile projectile:projectileManager){
             if(projectile.getState()!=Projectile.STATE_ALIVE) continue;
             drawable=projectilePaints.get(projectile.getId());
 
             if(drawable!=null){
-                Point point=projectile.getPoint();
-                left=(projectile.getSize()-1)/2;
-                right=left%2==0?left:left+1;
-                drawable.setBounds(point.x-left,point.y-left,point.x+right,point.y+right);
+               projectile.getRect().round(rect);
+                drawable.setBounds(rect);
                 drawable.draw(canvas);
             }
         }
