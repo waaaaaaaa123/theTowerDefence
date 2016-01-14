@@ -18,7 +18,7 @@ public class Enemy {
     public static final int STATE_DEAD=2;
 
     private int id=0;
-    private float speed=3;
+    private float speed=1;
     private float hp=100;
     private int bound=1;
 

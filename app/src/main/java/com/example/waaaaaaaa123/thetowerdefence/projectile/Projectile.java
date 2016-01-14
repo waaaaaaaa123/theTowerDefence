@@ -21,7 +21,7 @@ public class Projectile {
     private PointF point;
     private PointF forward;
     private float speed=5;
-    private float damage=10;
+    private float damage=5;
     private RectF rect;
     private int state=STATE_ALIVE;
     public Projectile(Tower caster,Enemy target){

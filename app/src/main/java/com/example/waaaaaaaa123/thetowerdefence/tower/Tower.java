@@ -19,7 +19,7 @@ import com.example.waaaaaaaa123.thetowerdefence.projectile.ProjectileManager;
 public class Tower {
     private int id=0;
     private int range=2;
-    private int attackSpeed=5;
+    private int attackSpeed=3;
     private long attackTime=0;
     private int castPoint;
     private RectF rect;
