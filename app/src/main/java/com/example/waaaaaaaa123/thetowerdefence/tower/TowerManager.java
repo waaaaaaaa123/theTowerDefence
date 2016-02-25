@@ -3,6 +3,7 @@ package com.example.waaaaaaaa123.thetowerdefence.tower;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+import com.example.waaaaaaaa123.thetowerdefence.Player;
 import com.example.waaaaaaaa123.thetowerdefence.block.Block;
 import com.example.waaaaaaaa123.thetowerdefence.block.Grid;
 
@@ -15,20 +16,33 @@ import java.util.Iterator;
  */
 public class TowerManager implements Iterable<Tower>{
     private ArrayList<Tower> towers;
-    private  Grid grid;
+
     public TowerManager(){
         towers=new ArrayList<Tower>();
     }
 
-    public void setGrid(Grid grid) {
-        this.grid = grid;
-    }
 
-    public void addTower(RectF rect){
-        Tower tower=new Tower(rect);
-        grid.getBlock(rect.centerX(),rect.centerY()).setId(Block.TOWER);
+    public void addTower(int id,RectF rect){
+        Tower tower=null;
+        switch (id){
+            case Tower.TOWER_AXE:tower=new AxeTower(rect);break;
+            case Tower.TOWER_WHIP:tower=new WhipTower(rect);break;
+            case Tower.TOWER_SWORD:tower=new SwordTower(rect);break;
+            case Tower.TOWER_BOMB:tower=new BombTower(rect);break;
+            case Tower.TOWER_CHAIN:tower=new ChainTower(rect);break;
+            case Tower.TOWER_SPLIT:tower=new SplitTower(rect);break;
+            case Tower.TOWER_CONE:tower=new ConeTower(rect);break;
+        }
+        Player.getGrid().getBlock(rect.centerX(), rect.centerY()).setId(Block.TOWER);
         towers.add(tower);
 
+    }
+    public Tower getTower(Block block){
+        for (Tower tower : towers) {
+            if(tower.getRect().contains(block.getCenter().x,block.getCenter().y))
+                return tower;
+        }
+        return null;
     }
     public void update(long dt){
         for(Tower tower:towers){

@@ -11,7 +11,6 @@
         <item name="metaButtonBarStyle">@style/ButtonBar</item>
         <item name="metaButtonBarButtonStyle">@style/ButtonBarButton</item>
     </style>
-
     <!-- Backward-compatible version of ?android:attr/buttonBarStyle -->
     <style name="ButtonBar">
         <item name="android:paddingLeft">2dp</item>

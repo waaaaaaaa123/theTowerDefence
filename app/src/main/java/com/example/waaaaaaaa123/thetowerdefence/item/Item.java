@@ -5,49 +5,58 @@ import android.graphics.RectF;
 import com.example.waaaaaaaa123.thetowerdefence.Player;
 import com.example.waaaaaaaa123.thetowerdefence.block.Block;
 import com.example.waaaaaaaa123.thetowerdefence.block.Grid;
-import com.example.waaaaaaaa123.thetowerdefence.tower.TowerManager;
 
 /**
  * Created by aa081_000 on 2016/1/12.
  */
-public class Item {
-    public static final int STATE_INBAG=0;
-    public static final int STATE_ONSELLECT=1;
+public abstract class Item {
+    public static final int ITEM_BUILDBLOCK=1;
+    public static final int ITEM_GREENMUSHROOM=2;
+    public static final int ITEM_REDMUSHROOM=3;
+    public static final int ITEM_YELLOWMUSHROOM=4;
+    public static final int ITEM_AXETOWER=5;
+    public static final int ITEM_WHIPTOWER=6;
+    public static final int ITEM_SWORDTOWER=7;
+    public static final int ITEM_BOMB=8;
+    public static final int ITEM_NET=9;
+    public static final int ITEM_BOMBTOWER=10;
+    public static final int ITEM_CHAINTOWER=11;
+    public static final int ITEM_CONETOWER=12;
+    public static final int ITEM_SPLITTOWER=13;
+    public static final int ITEM_CHECKBLOCK=14;
+
+    public static final int STATE_INSLOT =0;
+    public static final int STATE_ONFOCUS =1;
     public static final int STATE_USE=2;
 
     private int id=0;
     private int state;
 
     private float range;
+    protected int cost;
 
     private RectF rect;
-    private RectF bagRect;
+    private ItemSlot slot;
 
-    private boolean useable=false;
+    protected Block block;
     private boolean showRange=false;
+    protected boolean usable =false;
 
-    private static Grid grid;
-    private static TowerManager towerManager;
-    private static Player player;
 
-    public Item(){
-        rect =new RectF();
-        bagRect=new RectF();
 
-        range=Grid.getLength()*2;
+    public Item(ItemSlot slot){
+        this.slot=slot;
+        rect =new RectF(slot.getRect());
+        init();
+    }
+    public abstract void init();
+
+    public final void init(int id,float range,int cost){
+        this.id=id;
+        this.range=range;
+        this.cost=cost;
     }
 
-    public static void setGrid(Grid grid) {
-        Item.grid = grid;
-    }
-
-    public static void setTowerManager(TowerManager towerManager) {
-        Item.towerManager = towerManager;
-    }
-
-    public static void setPlayer(Player player) {
-        Item.player = player;
-    }
 
     public RectF getRect() {
         return rect;
@@ -56,34 +65,45 @@ public class Item {
     public void setRect(float left,float top,float right,float bottom) {
         rect.set(left,top,right,bottom);
     }
-
-    public float getRange() {
-        return range;
+    public void setRect(RectF rect){
+        this.rect.set(rect);
     }
 
-    public boolean isShowRange() {
+
+
+
+
+
+    public final float getRange() {
+        return range*Grid.getLength();
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public final boolean isShowRange() {
         return showRange;
     }
 
-    public void onSellect(float x,float y){
+    public final void onFocus(float x, float y){
         float l=Grid.getLength();
         switch (state){
-            case STATE_INBAG:
-                bagRect.set(rect);
-                state=STATE_ONSELLECT;
+            case STATE_INSLOT:
+                state= STATE_ONFOCUS;
                 break;
-            case STATE_ONSELLECT:
-                Block block=grid.getBlock(x, y);
+            case STATE_ONFOCUS:
+                block=Player.getGrid().getBlock(x, y);
                 if(block==null)
                 {
                     rect.set(x-l/2,y-l/2,x+l/2,y+l/2);
-                    useable=false;
+                    usable =false;
                     showRange=false;
                 }
                 else
                 {
                     rect.set(block.getRect());
-                    setUseable(block);
+                    setUsable();
                     showRange=true;
                 }
                 break;
@@ -92,14 +112,14 @@ public class Item {
 
     }
     public void use(){
-        towerManager.addTower(rect);
-        player.removeItem(this);
+        slot.stackDown();
+        setState(STATE_INSLOT);
     }
-    public void setUseable(Block block) {
-        if(block.getId()==Block.BUILD)
-            useable=true;
-        else
-            useable=false;
+    public void buy(){
+
+    }
+    public void setUsable() {
+        usable = block.getId() == Block.BUILD;
     }
 
     public int getState() {
@@ -109,8 +129,13 @@ public class Item {
     public void setState(int state) {
         this.state = state;
         switch (state){
-            case STATE_INBAG:rect.set(bagRect);break;
-            case STATE_USE:use();break;
+            case STATE_INSLOT:
+                rect.set(slot.getRect());
+                showRange=false;
+                break;
+            case STATE_USE:
+                use();
+                break;
         }
     }
 
@@ -123,7 +148,8 @@ public class Item {
         return id;
     }
 
-    public boolean isUseable() {
-        return useable;
+    public boolean isUsable() {
+        return usable;
     }
+
 }

@@ -21,6 +21,7 @@ public class Block {
     public static final int TOWER=2;
     public static final int START=3;
     public static final int END=4;
+    public static final int CHECK=5;
 
     private int id=0;
     private RectF rect;

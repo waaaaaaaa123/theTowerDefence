@@ -9,6 +9,11 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+
+import com.example.waaaaaaaa123.thetowerdefence.button.ExitButton;
+import com.example.waaaaaaaa123.thetowerdefence.button.NewGameButton;
 
 import org.w3c.dom.Attr;
 
@@ -18,42 +23,40 @@ import org.w3c.dom.Attr;
 public class MainGameView extends SurfaceView implements SurfaceHolder.Callback  {
 
     private MainGameThread mThread;
-    private GestureDetector gestureDetector;
+    private SurfaceHolder sfh;
     public MainGameView(Context context,AttributeSet attrs) {
         super(context, attrs);
-        SurfaceHolder sfh=this.getHolder();
+        sfh=this.getHolder();
         sfh.addCallback(this);
         mThread=new MainGameThread(sfh,context,null);
-        final MyGestureListener controller = new MyGestureListener();
-        mThread.setMyGestureListener(controller);
-        gestureDetector=new GestureDetector(context, controller);
-        gestureDetector.setIsLongpressEnabled(false);
-        this.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction()==MotionEvent.ACTION_UP)
-                controller.onUp(event);
-                return gestureDetector.onTouchEvent(event);
-
-            }
-        });
+        this.setOnTouchListener(mThread);
     }
+
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        mThread.init(getLeft(),getTop(),getRight(),getBottom());
-        mThread.setRunning(true);
-        mThread.start();
+        Log.i("surface","created");
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        Log.i("surface", "changed");
+        mThread.init(getLeft(), getTop(), getRight(), getBottom());
+        mThread.setRunning(true);
+        if(!mThread.isAlive())
+            mThread.start();
 
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
+        Log.i("surface", "destroyed");
     mThread.setRunning(false);
+        try {
+            mThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
