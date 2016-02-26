@@ -36,7 +36,7 @@ public class MainGameThread extends Thread implements View.OnTouchListener {
     private boolean running=false;
     private Context context;
     private long lastTime=0;
-    private LinkedList<MotionEvent> joy;
+    private Queue<MotionEvent> joy;
     private boolean polling=false;
     private RectF rect;
 
@@ -110,7 +110,7 @@ public class MainGameThread extends Thread implements View.OnTouchListener {
 
     public void pollJoy(){
         while(!joy.isEmpty()){
-            MotionEvent e=joy.pop();
+            MotionEvent e=joy.poll();
             if(e.getAction()==MotionEvent.ACTION_UP)
                 myGestureListener.onUp(e);
             gestureDetector.onTouchEvent(e);
@@ -118,8 +118,7 @@ public class MainGameThread extends Thread implements View.OnTouchListener {
     }
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-
-        joy.push(event);
+        joy.offer(event);
         return true;
     }
 }
