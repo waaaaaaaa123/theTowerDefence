@@ -24,6 +24,8 @@ import com.example.waaaaaaaa123.thetowerdefence.tower.Tower;
 import com.example.waaaaaaaa123.thetowerdefence.tower.TowerManager;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.logging.Handler;
 
 /**
@@ -34,7 +36,8 @@ public class MainGameThread extends Thread implements View.OnTouchListener {
     private boolean running=false;
     private Context context;
     private long lastTime=0;
-    private boolean hasMotionEvent=false;
+    private LinkedList<MotionEvent> joy;
+    private boolean polling=false;
     private RectF rect;
 
     private Player player;
@@ -44,7 +47,7 @@ public class MainGameThread extends Thread implements View.OnTouchListener {
     public MainGameThread(SurfaceHolder surfaceHolder,Context context,Handler handler){
         this.surfaceHolder=surfaceHolder;
         this.context=context;
-
+        joy=new LinkedList<>();
         myGestureListener=new MyGestureListener();
         gestureDetector = new GestureDetector(context, myGestureListener);
         gestureDetector.setIsLongpressEnabled(false);
@@ -75,10 +78,6 @@ public class MainGameThread extends Thread implements View.OnTouchListener {
         this.running = running;
     }
 
-    public boolean isHasMotionEvent() {
-        return hasMotionEvent;
-    }
-
 
     @Override
     public void run() {
@@ -88,16 +87,16 @@ public class MainGameThread extends Thread implements View.OnTouchListener {
         while(running){
             Canvas canvas=null;
             long dt=System.currentTimeMillis()-lastTime;
+            lastTime=System.currentTimeMillis();
             try{
 
                 canvas=surfaceHolder.lockCanvas(null);
                 synchronized (surfaceHolder){
+                    pollJoy();
                     player.update(dt);
                     if(dt>0)
                         Log.v("fps",1000/dt+"");
-                    lastTime=System.currentTimeMillis();
                     drawableManager.draw(canvas);
-                    //hasMotionEvent=false;
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -109,15 +108,18 @@ public class MainGameThread extends Thread implements View.OnTouchListener {
         }
     }
 
+    public void pollJoy(){
+        while(!joy.isEmpty()){
+            MotionEvent e=joy.pop();
+            if(e.getAction()==MotionEvent.ACTION_UP)
+                myGestureListener.onUp(e);
+            gestureDetector.onTouchEvent(e);
+        }
+    }
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if (lastTime==0)
-            return false;
-        synchronized (surfaceHolder) {
-            if (event.getAction() == MotionEvent.ACTION_UP)
-                myGestureListener.onUp(event);
 
-            return gestureDetector.onTouchEvent(event);
-        }
+        joy.push(event);
+        return true;
     }
 }
