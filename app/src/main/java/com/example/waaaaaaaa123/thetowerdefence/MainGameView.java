@@ -29,7 +29,7 @@ public class MainGameView extends SurfaceView implements SurfaceHolder.Callback 
         sfh=this.getHolder();
         sfh.addCallback(this);
         mThread=new MainGameThread(sfh,context,null);
-        this.setOnTouchListener(mThread);
+
     }
 
 
@@ -45,7 +45,7 @@ public class MainGameView extends SurfaceView implements SurfaceHolder.Callback 
         mThread.setRunning(true);
         if(!mThread.isAlive())
             mThread.start();
-
+        this.setOnTouchListener(mThread);
     }
 
     @Override

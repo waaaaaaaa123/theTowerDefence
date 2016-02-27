@@ -111,9 +111,11 @@ public class MainGameThread extends Thread implements View.OnTouchListener {
     public void pollJoy(){
         while(!joy.isEmpty()){
             MotionEvent e=joy.poll();
-            if(e.getAction()==MotionEvent.ACTION_UP)
-                myGestureListener.onUp(e);
             gestureDetector.onTouchEvent(e);
+            if(e.getAction()==MotionEvent.ACTION_UP){
+                myGestureListener.onUp(e);
+                return ;
+            }
         }
     }
     @Override
