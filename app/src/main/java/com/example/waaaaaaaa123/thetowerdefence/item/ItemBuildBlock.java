@@ -30,7 +30,7 @@ public class ItemBuildBlock extends Item {
 
     @Override
     public void use() {
-        Player.getGrid().getBlock(getRect().centerX(), getRect().centerY()).setId(Block.BUILD);
+        block.setId(Block.BUILD);
         Player.getWave().setPath();
         super.use();
     }

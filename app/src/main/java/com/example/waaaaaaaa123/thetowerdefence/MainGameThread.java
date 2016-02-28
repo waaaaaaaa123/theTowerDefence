@@ -23,6 +23,7 @@ import com.example.waaaaaaaa123.thetowerdefence.projectile.ProjectileManager;
 import com.example.waaaaaaaa123.thetowerdefence.tower.Tower;
 import com.example.waaaaaaaa123.thetowerdefence.tower.TowerManager;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -47,7 +48,7 @@ public class MainGameThread extends Thread implements View.OnTouchListener {
     public MainGameThread(SurfaceHolder surfaceHolder,Context context,Handler handler){
         this.surfaceHolder=surfaceHolder;
         this.context=context;
-        joy=new LinkedList<>();
+        joy=new ArrayDeque<>(100);
         myGestureListener=new MyGestureListener();
         gestureDetector = new GestureDetector(context, myGestureListener);
         gestureDetector.setIsLongpressEnabled(false);

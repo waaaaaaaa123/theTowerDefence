@@ -1,6 +1,8 @@
 package com.example.waaaaaaaa123.thetowerdefence;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -40,16 +42,16 @@ import java.util.HashMap;
 public class DrawableManager {
     private Context context;
     private Player player;
-    private HashMap<Integer,Drawable> blockPaints;
+    private HashMap<Integer,Bitmap> blockPaints;
     private Grid grid;
-    private HashMap<Integer,Drawable> enemyPaints;
+    private HashMap<Integer,Bitmap> enemyPaints;
     private TowerManager towerManager;
-    private HashMap<Integer,Drawable> towerPaints;
-    private HashMap<Integer,Drawable> abilityIconPaints;
+    private HashMap<Integer,Bitmap> towerPaints;
+    private HashMap<Integer,Bitmap> abilityIconPaints;
     private ProjectileManager projectileManager;
-    private HashMap<Integer,Drawable> projectilePaints;
+    private HashMap<Integer,Bitmap> projectilePaints;
     private Bag bag;
-    private HashMap<Integer,Drawable> itemPaints;
+    private HashMap<Integer,Bitmap> itemPaints;
     private Wave wave;
     public DrawableManager(Context context,Player player){
         this.context=context;
@@ -59,66 +61,67 @@ public class DrawableManager {
         this.projectileManager=player.getProjectileManager();
         this.bag=player.getBag();
 
-        blockPaints=new HashMap<Integer,Drawable>();
-        enemyPaints=new HashMap<Integer,Drawable>();
-        towerPaints=new HashMap<Integer,Drawable>();
+        blockPaints=new HashMap<Integer,Bitmap>();
+        enemyPaints=new HashMap<Integer,Bitmap>();
+        towerPaints=new HashMap<Integer,Bitmap>();
         abilityIconPaints=new HashMap<>();
-        projectilePaints=new HashMap<Integer,Drawable>();
+        projectilePaints=new HashMap<Integer,Bitmap>();
         itemPaints=new HashMap<>();
         init();
     }
     public void init(){
-        blockPaints.put(Block.BASE, context.getResources().getDrawable(R.drawable.block_base));
-        blockPaints.put(Block.BUILD, context.getResources().getDrawable(R.drawable.block_build));
-        blockPaints.put(Block.TOWER, context.getResources().getDrawable(R.drawable.block_build));
-        blockPaints.put(Block.START, context.getResources().getDrawable(R.drawable.block_start));
-        blockPaints.put(Block.END, context.getResources().getDrawable(R.drawable.block_end));
-        blockPaints.put(Block.CHECK,context.getResources().getDrawable(R.drawable.block_check));
-        enemyPaints.put(0, context.getResources().getDrawable(R.drawable.dummy));
+
+        blockPaints.put(Block.BASE, BitmapFactory.decodeResource(context.getResources(), R.drawable.block_base));
+        blockPaints.put(Block.BUILD,BitmapFactory.decodeResource(context.getResources(), R.drawable.block_build));
+        blockPaints.put(Block.TOWER, BitmapFactory.decodeResource(context.getResources(), R.drawable.block_build));
+        blockPaints.put(Block.START, BitmapFactory.decodeResource(context.getResources(), R.drawable.block_start));
+        blockPaints.put(Block.END, BitmapFactory.decodeResource(context.getResources(), R.drawable.block_end));
+        blockPaints.put(Block.CHECK,BitmapFactory.decodeResource(context.getResources(), R.drawable.block_check));
+        enemyPaints.put(0, BitmapFactory.decodeResource(context.getResources(), R.drawable.dummy));
 
 
-        towerPaints.put(Tower.TOWER_AXE,context.getResources().getDrawable(R.drawable.tower_axe));
-        towerPaints.put(Tower.TOWER_WHIP,context.getResources().getDrawable(R.drawable.tower_whip));
-        towerPaints.put(Tower.TOWER_SWORD,context.getResources().getDrawable(R.drawable.tower_sword));
-        towerPaints.put(Tower.TOWER_BOMB,context.getResources().getDrawable(R.drawable.tower_bomb));
-        towerPaints.put(Tower.TOWER_CHAIN,context.getResources().getDrawable(R.drawable.tower_chain));
-        towerPaints.put(Tower.TOWER_CONE,context.getResources().getDrawable(R.drawable.tower_cone));
-        towerPaints.put(Tower.TOWER_SPLIT,context.getResources().getDrawable(R.drawable.tower_split));
+        towerPaints.put(Tower.TOWER_AXE,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_axe));
+        towerPaints.put(Tower.TOWER_WHIP,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_whip));
+        towerPaints.put(Tower.TOWER_SWORD,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_sword));
+        towerPaints.put(Tower.TOWER_BOMB,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_bomb));
+        towerPaints.put(Tower.TOWER_CHAIN,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_chain));
+        towerPaints.put(Tower.TOWER_CONE,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_cone));
+        towerPaints.put(Tower.TOWER_SPLIT,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_split));
 
 
-        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_ARMORREDUCE,context.getResources().getDrawable(R.drawable.ability_armor_reduce));
-        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_CRITICALSTRIKE,context.getResources().getDrawable(R.drawable.ability_critical_strike));
-        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_SLOWDOWN,context.getResources().getDrawable(R.drawable.ability_slowdown));
-        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_STUN,context.getResources().getDrawable(R.drawable.ability_stun));
-        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_GREED,context.getResources().getDrawable(R.drawable.ability_greed));
-        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_IMPETUS,context.getResources().getDrawable(R.drawable.ability_impetus));
-        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_HEAL,context.getResources().getDrawable(R.drawable.ability_heal));
-        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_COMBO,context.getResources().getDrawable(R.drawable.ability_combo));
-        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_POISON,context.getResources().getDrawable(R.drawable.ability_poison));
+        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_ARMORREDUCE,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_armor_reduce));
+        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_CRITICALSTRIKE,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_critical_strike));
+        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_SLOWDOWN,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_slowdown));
+        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_STUN,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_stun));
+        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_GREED,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_greed));
+        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_IMPETUS,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_impetus));
+        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_HEAL,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_heal));
+        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_COMBO,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_combo));
+        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_POISON,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_poison));
 
 
 
-        projectilePaints.put(Projectile.PROJECTILE_AXE,context.getResources().getDrawable(R.drawable.projectile_axe));
-        projectilePaints.put(Projectile.PROJECTILE_WHIP,context.getResources().getDrawable(R.drawable.projectile_whip));
-        projectilePaints.put(Projectile.PROJECTILE_SWORD,context.getResources().getDrawable(R.drawable.projectile_sword));
-        projectilePaints.put(Projectile.PROJECTILE_BOMB,context.getResources().getDrawable(R.drawable.projectile_bomb));
-        projectilePaints.put(Projectile.PROJECTILE_CHAIN,context.getResources().getDrawable(R.drawable.projectile_chain));
-        projectilePaints.put(Projectile.PROJECTILE_CONE,context.getResources().getDrawable(R.drawable.projectile_cone));
-        projectilePaints.put(Projectile.PROJECTILE_SPLIT,context.getResources().getDrawable(R.drawable.projectile_split));
+        projectilePaints.put(Projectile.PROJECTILE_AXE,BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile_axe));
+        projectilePaints.put(Projectile.PROJECTILE_WHIP,BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile_whip));
+        projectilePaints.put(Projectile.PROJECTILE_SWORD,BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile_sword));
+        projectilePaints.put(Projectile.PROJECTILE_BOMB,BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile_bomb));
+        projectilePaints.put(Projectile.PROJECTILE_CHAIN,BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile_chain));
+        projectilePaints.put(Projectile.PROJECTILE_CONE,BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile_cone));
+        projectilePaints.put(Projectile.PROJECTILE_SPLIT,BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile_split));
 
 
-        itemPaints.put(Item.ITEM_BUILDBLOCK, context.getResources().getDrawable(R.drawable.block_build));
-        itemPaints.put(Item.ITEM_GREENMUSHROOM,context.getResources().getDrawable(R.drawable.green_mushroom));
-        itemPaints.put(Item.ITEM_REDMUSHROOM,context.getResources().getDrawable(R.drawable.red_mushroom));
-        itemPaints.put(Item.ITEM_YELLOWMUSHROOM,context.getResources().getDrawable(R.drawable.yellow_mushroom));
-        itemPaints.put(Item.ITEM_AXETOWER,context.getResources().getDrawable(R.drawable.tower_axe));
-        itemPaints.put(Item.ITEM_WHIPTOWER,context.getResources().getDrawable(R.drawable.tower_whip));
-        itemPaints.put(Item.ITEM_SWORDTOWER,context.getResources().getDrawable(R.drawable.tower_sword));
-        itemPaints.put(Item.ITEM_BOMBTOWER,context.getResources().getDrawable(R.drawable.tower_bomb));
-        itemPaints.put(Item.ITEM_CHAINTOWER,context.getResources().getDrawable(R.drawable.tower_chain));
-        itemPaints.put(Item.ITEM_CONETOWER,context.getResources().getDrawable(R.drawable.tower_cone));
-        itemPaints.put(Item.ITEM_SPLITTOWER,context.getResources().getDrawable(R.drawable.tower_split));
-        itemPaints.put(Item.ITEM_CHECKBLOCK,context.getResources().getDrawable(R.drawable.block_check));
+        itemPaints.put(Item.ITEM_BUILDBLOCK, BitmapFactory.decodeResource(context.getResources(), R.drawable.block_build));
+        itemPaints.put(Item.ITEM_GREENMUSHROOM,BitmapFactory.decodeResource(context.getResources(), R.drawable.green_mushroom));
+        itemPaints.put(Item.ITEM_REDMUSHROOM,BitmapFactory.decodeResource(context.getResources(), R.drawable.red_mushroom));
+        itemPaints.put(Item.ITEM_YELLOWMUSHROOM,BitmapFactory.decodeResource(context.getResources(), R.drawable.yellow_mushroom));
+        itemPaints.put(Item.ITEM_AXETOWER,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_axe));
+        itemPaints.put(Item.ITEM_WHIPTOWER,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_whip));
+        itemPaints.put(Item.ITEM_SWORDTOWER,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_sword));
+        itemPaints.put(Item.ITEM_BOMBTOWER,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_bomb));
+        itemPaints.put(Item.ITEM_CHAINTOWER,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_chain));
+        itemPaints.put(Item.ITEM_CONETOWER,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_cone));
+        itemPaints.put(Item.ITEM_SPLITTOWER,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_split));
+        itemPaints.put(Item.ITEM_CHECKBLOCK,BitmapFactory.decodeResource(context.getResources(), R.drawable.block_check));
     }
 
 
@@ -220,7 +223,7 @@ public class DrawableManager {
             Paint paint=new Paint();
             paint.setColor(Color.BLACK);
             paint.setAlpha(128);
-            Drawable drawable;
+            Bitmap bitmap;
             Rect rect=new Rect();
             canvas.drawRect(Player.getMainRect(),paint);
             BuyButton button=Player.getShop().getBuyButton();
@@ -249,11 +252,12 @@ public class DrawableManager {
                 canvas.drawRect(slot.getRect(),paint);
                 Item item=slot.getItem();
                 if(item!=null){
-                    drawable=itemPaints.get(item.getId());
-                    if(drawable!=null){
+
+                    bitmap=itemPaints.get(item.getId());
+                    if(bitmap!=null){
                         slot.getRect().round(rect);
-                        drawable.setBounds(rect);
-                        drawable.draw(canvas);
+                        canvas.drawBitmap(bitmap,null,slot.getRect(),null);
+
 
                         paint.setColor(Color.BLACK);
                         paint.setTextSize(30);
@@ -271,7 +275,7 @@ public class DrawableManager {
             Paint paint=new Paint();
             paint.setColor(Color.BLACK);
             paint.setAlpha(128);
-            Drawable drawable;
+            Bitmap bitmap;
             Rect rect=new Rect();
             canvas.drawRect(book.getRect(),paint);
             LearnButton button=book.getLearnButton();
@@ -300,11 +304,10 @@ public class DrawableManager {
                 canvas.drawRect(slot.getRect(), paint);
                 TowerAbility towerAbility =slot.getTowerAbility();
                 if(towerAbility !=null){
-                    drawable=abilityIconPaints.get(towerAbility.getId());
-                    if(drawable!=null){
+                    bitmap=abilityIconPaints.get(towerAbility.getId());
+                    if(bitmap!=null){
                         slot.getRect().round(rect);
-                        drawable.setBounds(rect);
-                        drawable.draw(canvas);
+                        canvas.drawBitmap(bitmap,null,slot.getRect(),null);
                     }
                 }
             }
@@ -312,7 +315,7 @@ public class DrawableManager {
     }
     public void drawBag(Canvas canvas){
         Paint paint=new Paint();
-        Drawable drawable;
+        Bitmap bitmap;
         Rect rect=new Rect();
         for(ItemSlot slot:bag.getSlots()){
             paint.setColor(Color.BLACK);
@@ -320,11 +323,10 @@ public class DrawableManager {
             canvas.drawRect(slot.getRect(),paint);
             Item item=slot.getItem();
             if(item!=null){
-                drawable=itemPaints.get(item.getId());
-                if(drawable!=null){
+                bitmap=itemPaints.get(item.getId());
+                if(bitmap!=null){
                     slot.getRect().round(rect);
-                    drawable.setBounds(rect);
-                    drawable.draw(canvas);
+                    canvas.drawBitmap(bitmap,null,slot.getRect(),null);
 
                     paint.setColor(Color.BLACK);
                     paint.setTextSize(30);
@@ -351,11 +353,10 @@ public class DrawableManager {
 
             Rect rect=new Rect();
             Paint paint=new Paint();
-            Drawable drawable=towerPaints.get(tower.getId());
+            Bitmap bitmap=towerPaints.get(tower.getId());
 
             towerUI.getBookButton().getRect().round(rect);
-            drawable.setBounds(rect);
-            drawable.draw(canvas);
+            canvas.drawBitmap(bitmap,null,towerUI.getBookButton().getRect(),null);
 
             int n=tower.getLevel()-tower.getAbilities().size();
             if(n>0){
@@ -386,10 +387,9 @@ public class DrawableManager {
             for (AbilitySlot abilitySlot : towerUI.getAbilitySlots()) {
                 canvas.drawRect(abilitySlot.getRect(),paint);
                 if(abilitySlot.getTowerAbility()!=null){
-                    drawable=abilityIconPaints.get(abilitySlot.getTowerAbility().getId());
+                    bitmap=abilityIconPaints.get(abilitySlot.getTowerAbility().getId());
                     abilitySlot.getRect().round(rect);
-                    drawable.setBounds(rect);
-                    drawable.draw(canvas);
+                    canvas.drawBitmap(bitmap, null, abilitySlot.getRect(), null);
                 }
             }
 
@@ -397,12 +397,12 @@ public class DrawableManager {
     }
     public void drawFocusItem(Canvas canvas){
         Paint paint=new Paint();
-        Drawable drawable;
+        Bitmap bitmap;
         Rect rect=new Rect();
         Item item=Player.getFocusItem();
         if(item!=null){
-            drawable=itemPaints.get(item.getId());
-            if(drawable!=null)
+            bitmap=itemPaints.get(item.getId());
+            if(bitmap!=null)
             {
                 if(item.isShowRange()){
                     if(item.isUsable())
@@ -420,26 +420,25 @@ public class DrawableManager {
                 }
 
                 item.getRect().round(rect);
-                drawable.setBounds(rect);
-                drawable.draw(canvas);
+                canvas.drawBitmap(bitmap, null, item.getRect(), null);
+
             }
         }
 
     }
     public void drawBlock(Canvas canvas){
-        Drawable drawable;
+        Bitmap bitmap;
         Rect rect=new Rect();
         Paint paint=new Paint();
         paint.setColor(Color.BLACK);
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(35);
         for(Block block:grid){
-            drawable=blockPaints.get(block.getId());
+            bitmap=blockPaints.get(block.getId());
 
-            if(drawable!=null){
+            if(bitmap!=null){
                 block.getRect().round(rect);
-                drawable.setBounds(rect);
-                drawable.draw(canvas);
+                canvas.drawBitmap(bitmap, null, block.getRect(), null);
             }
         }
         ArrayList<Point> checks=Player.getGrid().getChecks();
@@ -451,7 +450,7 @@ public class DrawableManager {
         }
     }
     public void drawEnemy(Canvas canvas){
-        Drawable drawable;
+        Bitmap bitmap;
         Rect rect=new Rect();
 
         Paint p1=new Paint();
@@ -469,11 +468,10 @@ public class DrawableManager {
 
         for(Enemy enemy:wave){
             if(enemy.getState()==Enemy.STATE_ALIVE){
-                drawable=enemyPaints.get(enemy.getId());
-                if(drawable!=null){
+                bitmap=enemyPaints.get(enemy.getId());
+                if(bitmap!=null){
                     enemy.getRect().round(rect);
-                    drawable.setBounds(rect);
-                    drawable.draw(canvas);
+                    canvas.drawBitmap(bitmap,null,enemy.getRect(),null);
 
                     hpbar.set(rect.left, rect.top - 20, rect.right, rect.top - 10);
                     canvas.drawRect(hpbar, p1);
@@ -486,17 +484,16 @@ public class DrawableManager {
         }
     }
     public void drawTower(Canvas canvas){
-        Drawable drawable;
+        Bitmap bitmap;
         Rect rect=new Rect();
         for(Tower tower:towerManager){
-            drawable=towerPaints.get(tower.getId());
-            if(drawable!=null){
+            bitmap=towerPaints.get(tower.getId());
+            if(bitmap!=null){
                 tower.getRect().round(rect);
-                drawable.setBounds(rect);
 
                 canvas.save();
                 canvas.rotate(tower.getDegree(), tower.getPoint().x, tower.getPoint().y);
-                drawable.draw(canvas);
+                canvas.drawBitmap(bitmap,null,tower.getRect(),null);
                 canvas.restore();
             }
         }
@@ -506,31 +503,31 @@ public class DrawableManager {
             Paint p=new Paint();
             p.setColor(Color.GREEN);
             p.setAlpha(64);
-            canvas.drawCircle(focusTower.getRect().centerX(),focusTower.getRect().centerY(),focusTower.getRange()*Grid.getLength(),p);
+            canvas.drawCircle(focusTower.getRect().centerX(), focusTower.getRect().centerY(), focusTower.getRange() * Grid.getLength(), p);
 
-            drawable=towerPaints.get(focusTower.getId());
+            bitmap=towerPaints.get(focusTower.getId());
             focusTower.getRect().round(rect);
-            drawable.setBounds(rect);
+
 
             canvas.save();
             canvas.rotate(focusTower.getDegree(), focusTower.getPoint().x, focusTower.getPoint().y);
-            drawable.draw(canvas);
+            canvas.drawBitmap(bitmap,null,focusTower.getRect(),null);
             canvas.restore();
         }
     }
     public void drawProjectile(Canvas canvas){
-        Drawable drawable;
+        Bitmap bitmap;
         Rect rect=new Rect();
         for(Projectile projectile:projectileManager){
             if(projectile.getState()!=Projectile.STATE_ALIVE) continue;
-            drawable=projectilePaints.get(projectile.getId());
-            if(drawable!=null){
+            bitmap=projectilePaints.get(projectile.getId());
+            if(bitmap!=null){
                 projectile.getRect().round(rect);
-                drawable.setBounds(rect);
+
 
                 canvas.save();
                 canvas.rotate(projectile.getDegree(),projectile.getPoint().x,projectile.getPoint().y);
-                drawable.draw(canvas);
+                canvas.drawBitmap(bitmap,null,projectile.getRect(),null);
                 canvas.restore();
             }
         }

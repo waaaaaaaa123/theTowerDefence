@@ -31,7 +31,9 @@ public class ItemCheckBlock extends Item {
 
     @Override
     public void use() {
-        Player.getGrid().setBlockId(getRect().centerX(), getRect().centerY(), Block.CHECK);
+        //Player.getGrid().setBlockId(getRect().centerX(), getRect().centerY(), Block.CHECK);
+        block.setId(Block.CHECK);
+        Player.getGrid().getChecks().add(Player.getGrid().getBlockCount(block));
         Player.getWave().setPath();
         super.use();
     }
