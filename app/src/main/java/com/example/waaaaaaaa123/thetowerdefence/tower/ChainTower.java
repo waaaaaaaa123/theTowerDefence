@@ -14,6 +14,6 @@ public class ChainTower extends Tower {
 
     @Override
     public void init() {
-        init(TOWER_CHAIN,TYPE_MAGICAL, Projectile.PROJECTILE_CHAIN,10,0.5f,4);
+        init(TOWER_CHAIN,TYPE_MAGICAL, Projectile.PROJECTILE_CHAIN,10,10,0.5f,4);
     }
 }

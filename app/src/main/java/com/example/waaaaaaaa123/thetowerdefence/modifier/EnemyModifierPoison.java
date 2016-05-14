@@ -21,7 +21,7 @@ public class EnemyModifierPoison extends EnemyModifier {
 
     @Override
     public void init() {
-        init(MODIFIER_POSION,3);
+        init(MODIFIER_POISON,3);
     }
 
     public void setCaster(Tower caster) {
@@ -29,14 +29,8 @@ public class EnemyModifierPoison extends EnemyModifier {
     }
 
     @Override
-    public void stackUp(int s) {
-        if(s>=getStack()){
-            super.stackUp(s);
-            for(int i=getStack();i<s;i++){
-                damagepercent+=0.05f;
-            }
-            setStack(s);
-        }
+    public void onStack() {
+        damagepercent+=0.05f;
     }
 
     @Override

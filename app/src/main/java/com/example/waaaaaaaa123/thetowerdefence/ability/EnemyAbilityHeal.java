@@ -19,7 +19,7 @@ public class EnemyAbilityHeal extends EnemyAbility {
 
     @Override
     public void init() {
-        init(ABILITY_ENEMY_HEAL,1);
+        init(ABILITY_ENEMY_HEAL,STATE_READY,1);
     }
 
     private boolean isInRange(Enemy enemy){
@@ -33,20 +33,19 @@ public class EnemyAbilityHeal extends EnemyAbility {
 
 
     @Override
-    public void cast() {
+    public boolean cast() {
         if(caster.getHpPercent()<1){
             caster.heal(healpercent);
-            super.cast();
-            return;
+            return true;
         }
         for (Enemy enemy : Player.getWave().getEnemies()) {
             if(enemy.getState()==Enemy.STATE_ALIVE&&isInRange(enemy)){
                 if(enemy.getHpPercent()<1){
                     enemy.heal(healpercent);
-                    super.cast();
-                    return;
+                    return true;
                 }
             }
         }
+        return false;
     }
 }

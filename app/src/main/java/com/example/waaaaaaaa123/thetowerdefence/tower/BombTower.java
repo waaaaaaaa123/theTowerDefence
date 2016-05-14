@@ -14,6 +14,6 @@ public class BombTower extends Tower {
 
     @Override
     public void init() {
-        init(TOWER_BOMB,TYPE_MAGICAL, Projectile.PROJECTILE_BOMB,30,0.5f,2.7f);
+        init(TOWER_BOMB,TYPE_MAGICAL, Projectile.PROJECTILE_BOMB,30,30,0.5f,2.7f);
     }
 }

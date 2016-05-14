@@ -22,8 +22,11 @@ public class ProjectileBomb extends Projectile {
     }
 
     @Override
-    public void checkTargetPoint() {
+    public void initTargetPoint() {
+        super.initTargetPoint();
+        target=null;
     }
+
 
 
     @Override

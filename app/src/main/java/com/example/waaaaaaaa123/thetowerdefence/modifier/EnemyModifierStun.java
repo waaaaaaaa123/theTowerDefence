@@ -15,15 +15,10 @@ public class EnemyModifierStun extends EnemyModifier {
         init(MODIFIER_STUN, 0.25f);
     }
 
-    @Override
-    public void stackUp(int s) {
 
-        if(s>=getStack()){
-            super.stackUp(s);
-            for(int i=getStack();i<s;i++)
-                setDuration(getDuration()+0.1f);
-            setStack(s);
-        }
+    @Override
+    public void onStack() {
+        setDuration(getDuration()+0.1f);
     }
 
     @Override

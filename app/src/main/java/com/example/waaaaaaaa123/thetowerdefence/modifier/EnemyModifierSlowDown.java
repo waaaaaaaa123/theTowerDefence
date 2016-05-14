@@ -19,16 +19,10 @@ public class EnemyModifierSlowDown extends EnemyModifier {
     }
 
 
+
     @Override
-    public void stackUp(int s) {
-        if(s>=getStack()){
-            super.stackUp(s);
-            for(int i=getStack();i<s;i++){
-                getTarget().setSpeed(getTarget().getSpeed()*slow);;
-            }
-            setStack(s);
-        }
-    }
+    public void onStack() {
+        getTarget().setSpeed(getTarget().getSpeed()*slow);    }
 
     @Override
     public void onStart() {

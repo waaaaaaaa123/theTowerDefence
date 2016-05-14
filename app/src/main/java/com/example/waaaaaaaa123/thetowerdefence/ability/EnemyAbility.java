@@ -9,6 +9,9 @@ public abstract class EnemyAbility extends Ability {
     public static final int ABILITY_ENEMY_DODGE=0;
     public static final int ABILITY_ENEMY_HEAL=1;
 
+    public static final int STATE_ATTACKLANDED=0;
+    public static final int STATE_READY=1;
+
     protected Enemy caster;
 
     public EnemyAbility(Enemy caster){

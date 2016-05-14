@@ -14,24 +14,8 @@ public class SwordTower extends Tower{
 
     @Override
     public void init() {
-        init(TOWER_SWORD,TYPE_PHYSICAL, Projectile.PROJECTILE_SWORD,10,1,4);
+        init(TOWER_SWORD,TYPE_PHYSICAL, Projectile.PROJECTILE_SWORD,10,10,1,4);
     }
 
-    @Override
-    public void onGreenMushroom() {
-        super.onGreenMushroom();
-        speed+=0.3;
-    }
 
-    @Override
-    public void onRedMushroom() {
-        super.onRedMushroom();
-        damage+=5;
-    }
-
-    @Override
-    public void onYellowMushroom() {
-        super.onYellowMushroom();
-        range+=0.75;
-    }
 }

@@ -14,24 +14,7 @@ public class AxeTower extends Tower {
 
     @Override
     public void init() {
-        init(TOWER_AXE,TYPE_PHYSICAL, Projectile.PROJECTILE_AXE,10,1,2);
+        init(TOWER_AXE,TYPE_PHYSICAL, Projectile.PROJECTILE_AXE,10,10,1,2);
     }
 
-    @Override
-    public void onGreenMushroom() {
-        super.onGreenMushroom();
-        speed+=0.5;
-    }
-
-    @Override
-    public void onRedMushroom() {
-        super.onRedMushroom();
-        damage+=10;
-    }
-
-    @Override
-    public void onYellowMushroom() {
-        super.onYellowMushroom();
-        range+=0.4;
-    }
 }

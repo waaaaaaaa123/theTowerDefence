@@ -1,12 +1,16 @@
 package com.example.waaaaaaaa123.thetowerdefence.item;
 
 import com.example.waaaaaaaa123.thetowerdefence.Player;
+import com.example.waaaaaaaa123.thetowerdefence.ability.TowerAbility;
 import com.example.waaaaaaaa123.thetowerdefence.block.Block;
+import com.example.waaaaaaaa123.thetowerdefence.modifier.TowerModifier;
 
 /**
  * Created by aa081_000 on 2016/1/20.
  */
 public class ItemRedMushroom extends Item {
+    private int mId=TowerModifier.MODIFIER_TOWER_ATTACKUP;
+    private int stack=1;
     public ItemRedMushroom(ItemSlot slot) {
         super(slot);
     }
@@ -19,14 +23,16 @@ public class ItemRedMushroom extends Item {
     @Override
     public void setUsable() {
         usable =false;
-        if(block.getId()==Block.TOWER&& Player.getTowerManager().getTower(block).getMushroom()<5){
+        if(block.getId()==Block.TOWER&& Player.getTowerManager().getTower(block).hasModifier(mId)<=1){
             usable =true;
         }
     }
 
     @Override
     public void use() {
-        Player.getTowerManager().getTower(Player.getGrid().getBlock(getRect().centerX(),getRect().centerY())).onRedMushroom();
+        Player.getTowerManager().getTower(block).addModifier(mId,stack);
+        Player.getTowerManager().getTower(block).addAbility(TowerAbility.ABILITY_TOWER_MOREATTACK);
+        Player.getTowerManager().getTower(block).addAbility(TowerAbility.ABILITY_TOWER_MORESPEED);
         super.use();
     }
 }

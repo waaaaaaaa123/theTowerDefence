@@ -34,7 +34,8 @@ public class ItemConeTower extends Item {
                 Player.getTowerManager().getTower(block).onLevelUp();
                 break;
             case Block.BUILD:
-                Player.getTowerManager().addTower(Tower.TOWER_CONE,getRect());
+                //Player.getTowerManager().addTower(Tower.TOWER_CONE,getRect());
+                Player.getTowerManager().addTower(block,Tower.TOWER_CONE);
                 break;
         }
         super.use();

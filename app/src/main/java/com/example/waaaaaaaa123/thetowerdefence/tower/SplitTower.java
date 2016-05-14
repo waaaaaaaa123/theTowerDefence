@@ -21,7 +21,7 @@ public class SplitTower extends Tower {
 
     @Override
     public void init() {
-        init(TOWER_SPLIT, TYPE_MAGICAL, Projectile.PROJECTILE_SPLIT, 10, 1, 3);
+        init(TOWER_SPLIT, TYPE_MAGICAL, Projectile.PROJECTILE_SPLIT, 10,10, 1, 3);
     }
 
     @Override

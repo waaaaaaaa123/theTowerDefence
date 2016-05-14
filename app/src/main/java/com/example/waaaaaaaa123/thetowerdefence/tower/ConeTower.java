@@ -2,6 +2,7 @@ package com.example.waaaaaaaa123.thetowerdefence.tower;
 
 import android.graphics.RectF;
 
+import com.example.waaaaaaaa123.thetowerdefence.block.Block;
 import com.example.waaaaaaaa123.thetowerdefence.projectile.Projectile;
 
 /**
@@ -11,9 +12,12 @@ public class ConeTower extends Tower {
     public ConeTower(RectF rect) {
         super(rect);
     }
+    public ConeTower(Block block){
+        super(block);
+    }
 
     @Override
     public void init() {
-        init(TOWER_CONE,TYPE_MAGICAL, Projectile.PROJECTILE_CONE,10,1,4);
+        init(TOWER_CONE,TYPE_MAGICAL, Projectile.PROJECTILE_CONE,10,10,1,4);
     }
 }

@@ -5,7 +5,7 @@ import com.example.waaaaaaaa123.thetowerdefence.enemy.Enemy;
 /**
  * Created by aa081_000 on 2016/2/21.
  */
-public class EnemyModifierDodge extends EnemyModifier {
+public class EnemyModifierDodge extends EnemyModifier {//this modifier is useless
     public EnemyModifierDodge(Enemy target, int stack) {
         super(target, stack);
     }

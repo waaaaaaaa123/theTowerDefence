@@ -15,7 +15,12 @@ public class EnemyAbilityDodge extends EnemyAbility {
 
     @Override
     public void init() {
-        init(ABILITY_ENEMY_DODGE,0);
+        init(ABILITY_ENEMY_DODGE,STATE_ATTACKLANDED,0);
+    }
+
+    @Override
+    protected boolean cast() {
+        return false;
     }
 
     @Override

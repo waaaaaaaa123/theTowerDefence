@@ -2,6 +2,7 @@ package com.example.waaaaaaaa123.thetowerdefence.item;
 
 import com.example.waaaaaaaa123.thetowerdefence.Player;
 import com.example.waaaaaaaa123.thetowerdefence.block.Block;
+import com.example.waaaaaaaa123.thetowerdefence.orb.Orb;
 import com.example.waaaaaaaa123.thetowerdefence.tower.Tower;
 
 /**
@@ -23,7 +24,7 @@ public class ItemAxeTower extends Item {
 
         if(block.getId()==Block.TOWER){
             Tower tower=Player.getTowerManager().getTower(block);
-            if(tower.getId()==Tower.TOWER_AXE&&tower.getLevel()<Tower.LEVEL_MAX)
+            if(tower.getLevel()<Tower.LEVEL_MAX)
                 usable=true;
         }
     }
@@ -32,10 +33,10 @@ public class ItemAxeTower extends Item {
     public void use() {
         switch (block.getId()){
             case Block.TOWER:
-                Player.getTowerManager().getTower(block).onLevelUp();
+                Player.getTowerManager().getTower(block).addOrb(Orb.ORB_RED);
                 break;
             case Block.BUILD:
-                Player.getTowerManager().addTower(Tower.TOWER_AXE,getRect());
+                Player.getTowerManager().addTower(block,Tower.TOWER_ORB).addOrb(Orb.ORB_RED);
                 break;
         }
         super.use();

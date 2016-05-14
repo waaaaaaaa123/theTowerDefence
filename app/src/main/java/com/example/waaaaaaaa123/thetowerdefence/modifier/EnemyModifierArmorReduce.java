@@ -18,9 +18,14 @@ public class EnemyModifierArmorReduce extends EnemyModifier {
 
     @Override
     public void stackUp(int s) {
-        super.stackUp(s);
+        duration=restDuration;
         getTarget().setArmor( getTarget().getArmor()-s*reduce);
         setStack(getStack()+s);
+    }
+
+    @Override
+    public void onStack() {
+
     }
 
     @Override

@@ -35,8 +35,8 @@ public class ProjectileChain extends Projectile {
     }
 
     private float calDistance(Enemy enemy){
-        float dx=enemy.getPoint().x-getPoint().x;
-        float dy=enemy.getPoint().y-getPoint().y;
+        float dx=enemy.getPoint().x-getRect().centerX();
+        float dy=enemy.getPoint().y-getRect().centerY();
         return (float) Math.sqrt(dx*dx+dy*dy);
     }
     private Enemy searchEnemy(){
@@ -60,7 +60,7 @@ public class ProjectileChain extends Projectile {
 
     @Override
     public void onHit() {
-        getPoint().set(targetPoint);
+        //getPoint().set(targetPoint);
         target.attackLanded(this);
         stack--;
         if(stack>=0){

@@ -2,14 +2,11 @@ package com.example.waaaaaaaa123.thetowerdefence.enemy;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.util.Log;
 
 import com.example.waaaaaaaa123.thetowerdefence.Player;
 import com.example.waaaaaaaa123.thetowerdefence.ability.EnemyAbility;
 import com.example.waaaaaaaa123.thetowerdefence.ability.EnemyAbilityDodge;
 import com.example.waaaaaaaa123.thetowerdefence.ability.EnemyAbilityHeal;
-import com.example.waaaaaaaa123.thetowerdefence.ability.TowerAbility;
-import com.example.waaaaaaaa123.thetowerdefence.block.Block;
 import com.example.waaaaaaaa123.thetowerdefence.block.Grid;
 import com.example.waaaaaaaa123.thetowerdefence.modifier.EnemyModifier;
 import com.example.waaaaaaaa123.thetowerdefence.modifier.EnemyModifierArmorReduce;
@@ -258,8 +255,7 @@ public class Enemy implements Comparable<Enemy>{
 
         for (EnemyAbility ability : abilities) {
             ability.update(dt);
-            if(ability.isCd())
-                ability.cast();
+            ability.cast(EnemyAbility.STATE_READY);
         }
 
         move(dt);
@@ -312,7 +308,7 @@ public class Enemy implements Comparable<Enemy>{
                     enemyModifier =new EnemyModifierStun(this,stack);break;
                 case EnemyModifier.MODIFIER_ARMORREDUCE:
                     enemyModifier =new EnemyModifierArmorReduce(this,stack);break;
-                case EnemyModifier.MODIFIER_POSION:
+                case EnemyModifier.MODIFIER_POISON:
                     enemyModifier=new EnemyModifierPoison(this,stack); break;
             }
 
@@ -320,7 +316,7 @@ public class Enemy implements Comparable<Enemy>{
                 enemyModifiers.add(enemyModifier);
             }
         }
-            if(mId==EnemyModifier.MODIFIER_POSION&&enemyModifier!=null&&enemyModifier.getStack()<=stack){
+            if(mId==EnemyModifier.MODIFIER_POISON &&enemyModifier!=null&&enemyModifier.getStack()<=stack){
                 ((EnemyModifierPoison) enemyModifier).setCaster(caster);
             }
 

@@ -45,6 +45,12 @@ public class Grid implements Iterable<Block>{
             top+=length;
         }
     }
+
+    public void update(long dt){
+        for (Block block : blocks) {
+            block.update(dt);
+        }
+    }
     public Block getBlockByCount(int xCount, int yCount){
         if(xCount<xSize&&xCount>=0&&yCount<ySize&&yCount>=0)
             return blocks.get(xSize*yCount+xCount);
@@ -139,7 +145,7 @@ public class Grid implements Iterable<Block>{
         }
         public ArrayList<PointF> getPath(){
             if(from[end.y][end.x]==null)return null;
-            ArrayList<PointF> path=new ArrayList<PointF>(m[end.y][end.x]+1);
+            ArrayList<PointF> path= new ArrayList<>(m[end.y][end.x] + 1);
             for(Point c=end;c!=null;c=from[c.y][c.x]){
                 path.add(0, getBlockByCount(c.x, c.y).getCenter());
             }

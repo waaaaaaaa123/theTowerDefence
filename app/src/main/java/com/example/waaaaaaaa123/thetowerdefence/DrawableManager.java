@@ -87,7 +87,10 @@ public class DrawableManager {
         towerPaints.put(Tower.TOWER_CHAIN,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_chain));
         towerPaints.put(Tower.TOWER_CONE,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_cone));
         towerPaints.put(Tower.TOWER_SPLIT,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_split));
-
+        towerPaints.put(Tower.TOWER_RIFLE,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_rifle));
+        towerPaints.put(Tower.TOWER_ROTATE,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_rotate));
+        towerPaints.put(Tower.TOWER_BURN,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_burn));
+        towerPaints.put(Tower.TOWER_COMBO,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_combo));
 
         abilityIconPaints.put(TowerAbility.ABILITY_TOWER_ARMORREDUCE,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_armor_reduce));
         abilityIconPaints.put(TowerAbility.ABILITY_TOWER_CRITICALSTRIKE,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_critical_strike));
@@ -98,6 +101,12 @@ public class DrawableManager {
         abilityIconPaints.put(TowerAbility.ABILITY_TOWER_HEAL,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_heal));
         abilityIconPaints.put(TowerAbility.ABILITY_TOWER_COMBO,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_combo));
         abilityIconPaints.put(TowerAbility.ABILITY_TOWER_POISON,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_poison));
+        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_MOREATTACK,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_moreattack));
+        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_MORESPEED,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_morespeed));
+        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_Necromastery,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_necromastery));
+        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_Nethertoxin,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_nethertoxin));
+        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_STATUSUP,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_statusup));
+        abilityIconPaints.put(TowerAbility.ABILITY_TOWER_SPLIT,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_split));
 
 
 
@@ -108,6 +117,10 @@ public class DrawableManager {
         projectilePaints.put(Projectile.PROJECTILE_CHAIN,BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile_chain));
         projectilePaints.put(Projectile.PROJECTILE_CONE,BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile_cone));
         projectilePaints.put(Projectile.PROJECTILE_SPLIT,BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile_split));
+        projectilePaints.put(Projectile.PROJECTILE_RIFLE,BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile_rifle));
+        projectilePaints.put(Projectile.PROJECTILE_ROTATE,BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile_rotate));
+        projectilePaints.put(Projectile.PROJECTILE_BURN,BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile_burn));
+        projectilePaints.put(Projectile.PROJECTILE_COMBO,BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile_combo));
 
 
         itemPaints.put(Item.ITEM_BUILDBLOCK, BitmapFactory.decodeResource(context.getResources(), R.drawable.block_build));
@@ -163,12 +176,12 @@ public class DrawableManager {
 
             paint.setAlpha(255);
             paint.setTextAlign(Paint.Align.CENTER);
-            paint.setTextSize(40);
             RectF rect=new RectF();
             for (Button button : menu.getButtons()) {
                 paint.setColor(Color.WHITE);
                 rect.set(button.getRect());
                 rect.inset(5, 5);
+                paint.setTextSize(rect.height()*0.75f);
                 canvas.drawRect(rect, paint);
                 paint.setColor(Color.BLACK);
                 canvas.drawText(button.getString(),rect.centerX(),rect.bottom-5,paint);
@@ -245,6 +258,7 @@ public class DrawableManager {
                 rect.inset(-5, -5);
                 paint.setColor(Color.WHITE);
                 canvas.drawRect(rect,paint);
+
             }
             for(ItemSlot slot:Player.getShop().getSlots()){
                 paint.setColor(Color.BLACK);
@@ -526,7 +540,7 @@ public class DrawableManager {
 
 
                 canvas.save();
-                canvas.rotate(projectile.getDegree(),projectile.getPoint().x,projectile.getPoint().y);
+                canvas.rotate(projectile.getDegree(),projectile.getRect().centerX(),projectile.getRect().centerY());
                 canvas.drawBitmap(bitmap,null,projectile.getRect(),null);
                 canvas.restore();
             }

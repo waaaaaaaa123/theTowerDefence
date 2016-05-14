@@ -36,6 +36,10 @@ public class ProjectileManager implements Iterable<Projectile> {
             case Projectile.PROJECTILE_CHAIN:p=new ProjectileChain(caster,target);break;
             case Projectile.PROJECTILE_CONE:p=new ProjectileCone(caster, target);break;
             case Projectile.PROJECTILE_SPLIT:p=new ProjectileSplit(caster, target);break;
+            case Projectile.PROJECTILE_BURN:p=new ProjectileBurn(caster, target);break;
+            case Projectile.PROJECTILE_ROTATE:p=new ProjectileRotate(caster,target);break;
+            case Projectile.PROJECTILE_RIFLE:p=new ProjectileRifle(caster, target);break;
+            case Projectile.PROJECTILE_COMBO:p=new ProjectileCombo(caster,target);break;
         }
         if(p!=null)
         projectiles.add(p);

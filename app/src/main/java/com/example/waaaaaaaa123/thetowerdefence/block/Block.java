@@ -22,6 +22,7 @@ public class Block {
     public static final int START=3;
     public static final int END=4;
     public static final int CHECK=5;
+    public static final int DAMAGE=6;
 
     private int id=0;
     private RectF rect;
@@ -32,6 +33,10 @@ public class Block {
     public Block(RectF rect){
         this.rect=rect;
         center=new PointF(rect.centerX(),rect.centerY());
+    }
+
+    public void update(long dt){
+
     }
     public void setId(int id) {
         this.id = id;

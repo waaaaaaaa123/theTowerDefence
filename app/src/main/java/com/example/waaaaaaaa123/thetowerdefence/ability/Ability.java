@@ -5,33 +5,40 @@ package com.example.waaaaaaaa123.thetowerdefence.ability;
  */
 public abstract class Ability {
     private int id;
+    protected int state;
     private float cooldown;
-    private float cd;
+    private long timer;
 
     public Ability(){
         init();
     }
     public abstract void init();
 
-    public void init(int id,float cooldown){
+    public void init(int id,int state,float cooldown){
         this.id=id;
+        this.state=state;
         this.cooldown=cooldown;
-        cd=0;
+        timer=0;
     }
 
     public void update(long dt){
-        if(cd>0)
-            cd-=dt/1000;
-        else
-            cd=0;
+            timer-=dt;
+        if(timer<=0){
+            timer=0;
+        }
     }
 
-    public void cast(){
-        cd=cooldown;
+    public void cast(int state){
+        if(this.state==state&&timer==0){
+            if(cast())
+                timer= (long) (cooldown*1000);
+        }
     }
+    protected abstract boolean cast();
 
+    ;
     public boolean isCd(){
-        return cd==0;
+        return timer==0;
     }
 
     public boolean ruok(int state){

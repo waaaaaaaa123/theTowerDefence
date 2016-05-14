@@ -13,6 +13,6 @@ public class ProjectileSword extends Projectile {
 
     @Override
     public void init() {
-        init(PROJECTILE_SWORD,10);
+        init(PROJECTILE_SWORD,5);
     }
 }

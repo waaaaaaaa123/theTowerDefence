@@ -21,26 +21,10 @@ public class WhipTower extends Tower {
 
     @Override
     public void init() {
-        init(TOWER_WHIP,TYPE_PHYSICAL, Projectile.PROJECTILE_WHIP,2,5,2);
+        init(TOWER_WHIP,TYPE_PHYSICAL, Projectile.PROJECTILE_WHIP,2,2,5,2);
     }
 
-    @Override
-    public void onYellowMushroom() {
-        super.onYellowMushroom();
-        range+=0.3;
-    }
 
-    @Override
-    public void onRedMushroom() {
-        super.onRedMushroom();
-        damage+=3;
-    }
-
-    @Override
-    public void onGreenMushroom() {
-        super.onGreenMushroom();
-        speed+=1.5;
-    }
 /*
     @Override
     public void findTarget() {

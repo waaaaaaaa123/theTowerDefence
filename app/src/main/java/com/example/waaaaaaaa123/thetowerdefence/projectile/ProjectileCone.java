@@ -24,7 +24,7 @@ public class ProjectileCone extends Projectile {
 
     @Override
     public void recycle(Tower caster, Enemy target) {
-        super.recycle(caster, target);
+        super.recycle(caster, null);
         if(hits!=null)
             hits.clear();
     }
@@ -34,35 +34,11 @@ public class ProjectileCone extends Projectile {
         init(PROJECTILE_CONE,3);
     }
 
-    @Override
-    public void initTargetPoint() {
-        float range=caster.getRange()* Grid.getLength();
-        float dx=target.getPoint().x-caster.getPoint().x;
-        float dy=target.getPoint().y-caster.getPoint().y;
-        float d= (float) (Math.sqrt(dx*dx+dy*dy));
-        float x=caster.getPoint().x+dx/d*range;
-        float y=caster.getPoint().y+dy/d*range;
-        RectF rect=Player.getMainRect();
-        if(x<rect.left) x=rect.left;
-        if(x>rect.right) x=rect.right;
-        if(y<rect.top) y=rect.top;
-        if(y>rect.bottom) y=rect.bottom;
-        targetPoint.set(x, y);
-    }
-
-    @Override
-    public void checkTargetPoint() {
-    }
-
-    @Override
-    public void onHit() {
-        setState(STATE_DEAD);
-    }
 
     @Override
     public void update(long dt) {
         for (Enemy enemy : Player.getWave().getEnemies()) {
-            if(enemy.getState()==Enemy.STATE_ALIVE&&!hits.contains(enemy)&&isInRange(enemy,0.18f)){
+            if(enemy.getState()==Enemy.STATE_ALIVE&&!hits.contains(enemy)&&isInRange(enemy)){
                 enemy.attackLanded(this);
                 hits.add(enemy);
             }

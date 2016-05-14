@@ -20,7 +20,7 @@ public class AbilitySlot {
 
     public static TowerAbility CreateAbility(int id){
         TowerAbility ability=null;
-        switch (id){
+        /*switch (id){
             case TowerAbility.ABILITY_TOWER_ARMORREDUCE:ability=new TowerAbilityArmorReduce();break;
             case TowerAbility.ABILITY_TOWER_CRITICALSTRIKE:ability=new TowerAbilityCriticalStrike();break;
             case TowerAbility.ABILITY_TOWER_SLOWDOWN:ability=new TowerAbilitySlowDown();break;
@@ -30,7 +30,7 @@ public class AbilitySlot {
             case TowerAbility.ABILITY_TOWER_HEAL:ability=new TowerAbilityHeal();break;
             case TowerAbility.ABILITY_TOWER_IMPETUS:ability=new TowerAbilityImpetus();break;
             case TowerAbility.ABILITY_TOWER_POISON:ability=new TowerAbilityPoison();break;
-        }
+        }*/
         return ability;
     }
     public void setTowerAbility(TowerAbility towerAbility) {

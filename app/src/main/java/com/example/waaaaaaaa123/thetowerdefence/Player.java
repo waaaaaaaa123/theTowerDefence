@@ -86,6 +86,9 @@ public class Player {
         for (int i = 0; i < 9; i++) {
             bag.addItem(1);
             bag.addItem(Item.ITEM_BOMBTOWER);
+            bag.addItem(Item.ITEM_AXETOWER);
+            bag.addItem(Item.ITEM_WHIPTOWER);
+            bag.addItem(Item.ITEM_SWORDTOWER);
         }
         shop.earnGold(10000);
 

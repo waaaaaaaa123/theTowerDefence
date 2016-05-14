@@ -2,11 +2,15 @@ package com.example.waaaaaaaa123.thetowerdefence.item;
 
 import com.example.waaaaaaaa123.thetowerdefence.Player;
 import com.example.waaaaaaaa123.thetowerdefence.block.Block;
+import com.example.waaaaaaaa123.thetowerdefence.modifier.TowerModifier;
+import com.example.waaaaaaaa123.thetowerdefence.tower.Tower;
 
 /**
  * Created by aa081_000 on 2016/1/20.
  */
 public class ItemYellowMushroom extends Item {
+    private int mId=TowerModifier.MODIFIER_TOWER_RANGEUP;
+    private int stack=1;
     public ItemYellowMushroom(ItemSlot slot) {
         super(slot);
     }
@@ -19,14 +23,14 @@ public class ItemYellowMushroom extends Item {
     @Override
     public void setUsable() {
         usable =false;
-        if(block.getId()==Block.TOWER&& Player.getTowerManager().getTower(block).getMushroom()<5){
+        if(block.getId()==Block.TOWER&& Player.getTowerManager().getTower(block).hasModifier(mId)<=1){
             usable =true;
         }
     }
 
     @Override
     public void use() {
-        Player.getTowerManager().getTower(Player.getGrid().getBlock(getRect().centerX(),getRect().centerY())).onYellowMushroom();
+        Player.getTowerManager().getTower(block).addModifier(mId,stack);
         super.use();
     }
 }

@@ -37,6 +37,21 @@ public class TowerManager implements Iterable<Tower>{
         towers.add(tower);
 
     }
+    public Tower addTower(Block block,int id){
+        Tower tower=new Tower(block);
+        switch (id){
+            case Tower.TOWER_ORB:break;//id==0 means it's an orb tower.
+            case Tower.TOWER_CONE:tower=new ConeTower(block);break;
+        }
+        block.setId(Block.TOWER);
+        towers.add(tower);
+        return tower;
+    }
+    public void removeTower(Block block){
+        towers.remove(getTower(block));
+        block.setId(Block.BASE);
+    }
+
     public Tower getTower(Block block){
         for (Tower tower : towers) {
             if(tower.getRect().contains(block.getCenter().x,block.getCenter().y))

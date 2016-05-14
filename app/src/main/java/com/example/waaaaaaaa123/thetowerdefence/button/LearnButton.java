@@ -45,7 +45,6 @@ public class LearnButton extends Button {
             TowerAbility towerAbility=AbilitySlot.CreateAbility(slot.getTowerAbility().getId());
             Tower tower=Player.getTowerUI().getTower();
             tower.getAbilities().add(towerAbility);
-            towerAbility.setCaster(tower);
             Player.getTowerUI().resetSlots();
         }
     }
