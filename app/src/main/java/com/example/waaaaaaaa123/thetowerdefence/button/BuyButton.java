@@ -27,7 +27,7 @@ public class BuyButton extends Button {
     public boolean isBuyable(){
 
 
-        if(slot!=null&&slot.getItem()!=null&&slot.getItem().getCost()<=Player.getShop().getGold())
+        if(slot!=null&&slot.getItem()!=null&&slot.getItem().getCost()<=Player.getBag().getGold())
             return true;
         else
             return false;
@@ -48,6 +48,6 @@ public class BuyButton extends Button {
     @Override
     public void onClick() {
         if(isBuyable())
-            Player.getShop().buyItem(slot);
+            ;//Player.getShop().buyItem(slot);
     }
 }

@@ -21,9 +21,9 @@ public abstract class TowerAbility extends Ability {
     public static final int ABILITY_TOWER_MORESPEED=10;
     public static final int ABILITY_TOWER_MORERANGE=11;
     public static final int ABILITY_TOWER_SPLIT=12;
-    public static final int ABILITY_TOWER_Necromastery=13;
+    public static final int ABILITY_TOWER_NECROMASTERY =13;
     public static final int ABILITY_TOWER_STATUSUP=14;
-    public static final int ABILITY_TOWER_Nethertoxin=15;
+    public static final int ABILITY_TOWER_NETHERTOXIN =15;
 
     public static final int STATE_ATTACK=0;
     public static final int STATE_KILLED=1;
@@ -38,14 +38,29 @@ public abstract class TowerAbility extends Ability {
     }
 
     public static TowerAbility create(int id,Tower caster){
-        TowerAbility towerAbility=null;
+        TowerAbility ability=null;
         switch (id){
-            case ABILITY_TOWER_CRITICALSTRIKE:towerAbility=new TowerAbilityCriticalStrike(caster);break;
-            case TowerAbility.ABILITY_TOWER_COMBO:towerAbility=new TowerAbilityCombo(caster);break;
-            case TowerAbility.ABILITY_TOWER_SPLIT:towerAbility=new TowerAbilitySplit(caster);break;
-            case TowerAbility.ABILITY_TOWER_MORESPEED:towerAbility=new TowerAbilityMoreSpeed(caster);break;
+            case ABILITY_TOWER_ARMORREDUCE:ability=new TowerAbilityArmorReduce(caster);break;
+            case ABILITY_TOWER_POISON:ability=new TowerAbilityPoison(caster);break;
+            case ABILITY_TOWER_IMPETUS:ability=new TowerAbilityImpetus(caster);break;
+            case ABILITY_TOWER_HEAL:ability=new TowerAbilityHeal(caster);break;
+
+            case ABILITY_TOWER_CRITICALSTRIKE:ability=new TowerAbilityCriticalStrike(caster);break;
+            case ABILITY_TOWER_COMBO:ability=new TowerAbilityCombo(caster);break;
+
+            case ABILITY_TOWER_GREED:ability=new TowerAbilityGreed(caster);break;
+            case ABILITY_TOWER_MOREATTACK:ability=new TowerAbilityMoreAttack(caster);break;
+            case ABILITY_TOWER_NETHERTOXIN:ability=new TowerAbilityNethertoxin(caster);break;
+            case ABILITY_TOWER_SLOWDOWN:ability=new TowerAbilitySlowDown(caster);break;
+
+            case ABILITY_TOWER_SPLIT:ability=new TowerAbilitySplit(caster);break;
+
+            case ABILITY_TOWER_MORESPEED:ability=new TowerAbilityMoreSpeed(caster);break;
+            case ABILITY_TOWER_NECROMASTERY:ability=new TowerAbilityNecromastery(caster);break;
+            case ABILITY_TOWER_STATUSUP:ability=new TowerAbilityStatusUp(caster);break;
+            case ABILITY_TOWER_STUN:ability=new TowerAbilityStun(caster);break;
         }
-        return towerAbility;
+        return ability;
     }
 
 }

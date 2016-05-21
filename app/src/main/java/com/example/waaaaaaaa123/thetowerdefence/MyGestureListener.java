@@ -37,6 +37,8 @@ public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
     private static final int STATE_SCROLLBAG =4 ;
     private static final int STATE_FOCUSITEM =5 ;
 
+    public static MotionEvent event;
+    public static ItemSlot focusSlot;
     //private int state;
     private Grid grid;
     private Player player;
@@ -44,8 +46,7 @@ public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
     private ProjectileManager projectileManager;
     private Wave wave;
     private RectF topRect,mainRect,bottomRect;
-    private Item focusItem;
-    private ItemSlot focusSlot;
+    //private Item focusItem;
     private Dialog dialog;
     private Bag bag;
     public void init(Player player){
@@ -65,25 +66,47 @@ public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
     public void onUp(MotionEvent event) {
         Log.i("onUp",event.getX(0)+" "+event.getY(0));
 
-        if(focusItem!=null){
+        if(focusSlot!=null&&focusSlot.getItem()!=null){
+            Item focusItem=focusSlot.getItem();
             if(focusItem.isUsable()){
-                focusItem.setState(Item.STATE_USE);
+                //focusItem.setState(Item.STATE_USE);
+                focusItem.use();
             }
-            else
-                focusItem.setState(Item.STATE_INSLOT);
-            focusItem =null;
-            Player.setFocusItem(focusItem);
+            else if(Player.getBag().getShopRect().contains(event.getX(0),event.getY(0))&&!focusItem.isShop())
+                focusItem.sell();
+            //focusItem.setState(Item.STATE_INSLOT);
+
+            if(!focusItem.isShop()){
+
+                ItemSlot slot=bag.getSlot(event.getX(0),event.getY(0));
+                if(slot!=null&&slot.getType()==ItemSlot.TYPE_BAG)
+                    focusSlot.swap(slot);
+            }
+
+            /*focusItem =null;
+            Player.setFocusItem(focusItem);*/
             focusSlot=null;
         }
 
+    }
+    public boolean onEvent(MotionEvent e){
+        event=e;
+        float x=e.getX(0),y=e.getY(0);
+        if(Player.mainRect.contains(x,y))
+            Player.getGrid().onFocus(x,y);
+        if(e.getAction()==MotionEvent.ACTION_UP){
+            onUp(e);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
         if(focusSlot!=null){
             focusSlot.offHold();
-            focusItem=focusSlot.getItem();
-            Player.setFocusItem(focusItem);
+            Item focusItem=focusSlot.getItem();
+            //Player.setFocusItem(focusItem);
             if(focusItem!=null){
                 focusItem.onFocus(e2.getX(0),e2.getY(0));
             }
@@ -108,8 +131,8 @@ public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
     public boolean onDown(MotionEvent e) {
         Log.i("onDown","5");
 
-        if(Player.getAbilityBook().isOpen()||Player.getShop().isOpen())
-            return true;
+        /*if(Player.getAbilityBook().isOpen())
+            return true;*/
 
         float x=e.getX(0),y=e.getY(0);
         if(!Player.getTowerUI().getRect().contains(x,y))
@@ -151,6 +174,7 @@ public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
 
         if(Player.getTowerUI().isShow()){
             TowerUI towerUI=Player.getTowerUI();
+            /*
             BookButton bookButton=towerUI.getBookButton();
             if(bookButton.getRect().contains(x,y)){
                 bookButton.onClick();
@@ -166,10 +190,10 @@ public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
                     learnButton.onClick();
                 if(!book.getRect().contains(x,y))
                     bookButton.onClick();
-            }
+            }*/
         }
         else{
-            Shop shop=Player.getShop();
+            /*Shop shop=Player.getShop();
             ShopButton shopButton=bag.getShopButton();
             if(shopButton.getRect().contains(x,y)){
                 shopButton.onClick();
@@ -185,7 +209,7 @@ public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
                 if(!shop.getRect().contains(x,y))
                     shopButton.onClick();
             }
-
+*/
         }
 
         for (Button button : Player.getButtons()) {

@@ -1,10 +1,16 @@
 package com.example.waaaaaaaa123.thetowerdefence.tower;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.RectF;
 
 import com.example.waaaaaaaa123.thetowerdefence.Player;
 import com.example.waaaaaaaa123.thetowerdefence.ability.AbilitySlot;
+import com.example.waaaaaaaa123.thetowerdefence.block.Grid;
 import com.example.waaaaaaaa123.thetowerdefence.button.BookButton;
+import com.example.waaaaaaaa123.thetowerdefence.item.ItemSlot;
 
 import java.util.ArrayList;
 
@@ -15,16 +21,17 @@ public class TowerUI {
     private Tower tower;
     private boolean show=false;
     private RectF rect;
-    private BookButton bookButton;
+    //private BookButton bookButton;
     private ArrayList<AbilitySlot> abilitySlots;
+    private RectF towerIcon;
 
     public TowerUI(){
         rect= Player.getBottomRect();
 
         float l=Math.min(rect.height(),rect.width()/3);
-        RectF towerIcon = new RectF(rect.left, rect.top, rect.left + l, rect.top + l);
-        towerIcon.inset(20,20);
-        bookButton=new BookButton(towerIcon);
+        towerIcon = new RectF(rect.left, rect.top, rect.left + l, rect.top + l);
+        towerIcon.inset(towerIcon.width()*0.1f,towerIcon.height()*0.1f);
+        //bookButton=new BookButton(towerIcon);
 
         abilitySlots =new ArrayList<>(4);
         float left,right,top,bottom;
@@ -40,8 +47,17 @@ public class TowerUI {
         }
 
     }
+
+    public void draw(Canvas canvas){
+
+
+    }
     public Tower getTower() {
         return tower;
+    }
+
+    public RectF getTowerIcon() {
+        return towerIcon;
     }
 
     public void setTower(Tower tower) {
@@ -61,13 +77,14 @@ public class TowerUI {
         return rect;
     }
 
-    public BookButton getBookButton() {
+    /*public BookButton getBookButton() {
         return bookButton;
-    }
+    }*/
 
     public ArrayList<AbilitySlot> getAbilitySlots() {
         return abilitySlots;
     }
+
 
     public boolean isShow() {
         return show;

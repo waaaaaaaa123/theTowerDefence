@@ -18,8 +18,10 @@ public class Dialog {
     private ArrayList<String> text;
     public Dialog(){
         text=new ArrayList<>();
-        rect=new RectF(-200,-300,200,300);
-        rect.offset(Player.getMainRect().centerX(),Player.getMainRect().centerY());
+        float l=Player.mainRect.width();
+        rect=new RectF(-l/2,-l/2,l/2,l/2);
+        rect.inset(l*0.1f,-l*0.1f);
+        rect.offset(Player.mainRect.centerX(),Player.mainRect.centerY());
         init();
     }
     public void init(){

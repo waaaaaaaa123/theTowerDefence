@@ -1,13 +1,10 @@
 package com.example.waaaaaaaa123.thetowerdefence.projectile;
 
-import android.util.Log;
-
 import com.example.waaaaaaaa123.thetowerdefence.enemy.Enemy;
 import com.example.waaaaaaaa123.thetowerdefence.tower.Tower;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 
 /**
@@ -47,10 +44,12 @@ public class ProjectileManager implements Iterable<Projectile> {
     }
     public void update(long dt){
         for(Projectile projectile:projectiles){
-            switch (projectile.getState()){
+            if(projectile.getState()!=Projectile.STATE_DEAD)
+                projectile.update(dt);
+            /*switch (projectile.getState()){
                 case Projectile.STATE_ALIVE:projectile.update(dt);break;
-                //case Projectile.STATE_DEAD:projectile=null;break;
-            }
+                //case Projectile.STATE_DYING:projectile=null;break;
+            }*/
         }
         Collections.sort(projectiles);
 

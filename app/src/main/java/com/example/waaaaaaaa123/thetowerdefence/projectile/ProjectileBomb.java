@@ -1,9 +1,6 @@
 package com.example.waaaaaaaa123.thetowerdefence.projectile;
 
-import android.graphics.PointF;
-
 import com.example.waaaaaaaa123.thetowerdefence.Player;
-import com.example.waaaaaaaa123.thetowerdefence.block.Grid;
 import com.example.waaaaaaaa123.thetowerdefence.enemy.Enemy;
 import com.example.waaaaaaaa123.thetowerdefence.tower.Tower;
 
@@ -35,6 +32,6 @@ public class ProjectileBomb extends Projectile {
             if(enemy.getState()==Enemy.STATE_ALIVE&&isInRange(enemy,range))
                 enemy.attackLanded(this);
         }
-        setState(STATE_DEAD);
+        setState(STATE_DYING);
     }
 }

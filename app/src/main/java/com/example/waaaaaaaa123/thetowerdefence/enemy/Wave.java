@@ -15,16 +15,18 @@ import java.util.Iterator;
  * Created by aa081_000 on 2016/1/7.
  */
 public class Wave implements Iterable<Enemy> {
-    private int id;
+    private int id=-1;
     private ArrayList<Enemy> enemies;
-    private ArrayList<ArrayList<PointF>> path;
-    private int spawnSpeed=1,totalDp=20,minDp=2,minHplvl=1;
+    private ArrayList<ArrayList<Block>> path;
+    private int totalDp=20,minDp=2,minHplvl=1;
+    private float spawnSpeed=2;
     private int dpCount,hpCount;
     private long lastSpawnTime=0;
     public Wave(int id){
         this.id=id;
         enemies=new ArrayList<Enemy>();
         path=new ArrayList<>();
+        Player.getGrid().setPath();
 
     }
 
@@ -45,20 +47,20 @@ public class Wave implements Iterable<Enemy> {
 
     public void update(long dt){
 
-            lastSpawnTime -= dt ;
-            if (lastSpawnTime <= 0) {
-                //enemies.get(spawnCount++).setState(Enemy.STATE_ALIVE);
-                for(Enemy enemy:enemies){
-                    if(enemy.getState()==Enemy.STATE_NOTSPAWN)
-                    {
-                        enemy.setState(Enemy.STATE_ALIVE);
-                        break;
-                    }
+        lastSpawnTime -= dt ;
+        if (lastSpawnTime <= 0) {
+            //enemies.get(spawnCount++).setState(Enemy.STATE_ALIVE);
+            for(Enemy enemy:enemies){
+                if(enemy.getState()==Enemy.STATE_NOTSPAWN)
+                {
+                    enemy.setState(Enemy.STATE_ALIVE);
+                    break;
                 }
-                lastSpawnTime += 1000/spawnSpeed;
-                if (lastSpawnTime <= 0)
-                    update(0);
             }
+            lastSpawnTime += 1000/spawnSpeed;
+            if (lastSpawnTime <= 0)
+                update(0);
+        }
         int dead=0;
         for(Enemy enemy:enemies){
 
@@ -68,12 +70,42 @@ public class Wave implements Iterable<Enemy> {
             }
         }
         if(dead==enemies.size()){
+            Reward reward=new Reward(id);
             Player.setState(Player.STATE_PREPARE);
             //Player.getDialogs().add(new Dialog());
         }
         Collections.sort(enemies);
     }
+    //smax=10,hmax=10,lmax=4
+    private   int s,h,a,l;
     public void nextWave(){
+
+        enemies.clear();
+        id++;
+
+        spawnSpeed= id%3==0&&spawnSpeed<5?spawnSpeed+0.3f:spawnSpeed;
+
+        s=id%5==0&&s<10?s+1:s;
+        h=id%2==0&&h<10?h+1:h;
+        a=id%5-1;
+        l=id%10==0&&l<4?l+1:l;
+
+        for (int i = 0; i < id%10*10; i++) {
+
+
+            Enemy enemy=new Enemy();
+            if(i%10<=3){
+                enemy.init(s,h,a,l);
+            }
+            else
+                enemy.init(s,h,-1,l);
+            enemy.setPath(path.get(enemy.getBound()));
+            enemies.add(enemy);
+        }
+
+    }
+    /*
+    public void nextWave1(){
         enemies.clear();
 
         totalDp*=1.5;
@@ -98,11 +130,11 @@ public class Wave implements Iterable<Enemy> {
 
         }
 
-    }
+    }*/
 
     public void addEnemy(Enemy e){
-            e.setPath(path.get(e.getBound()));
-            enemies.add(e);
+        e.setPath(path.get(e.getBound()));
+        enemies.add(e);
     }
 
     public ArrayList<Enemy> getEnemies() {

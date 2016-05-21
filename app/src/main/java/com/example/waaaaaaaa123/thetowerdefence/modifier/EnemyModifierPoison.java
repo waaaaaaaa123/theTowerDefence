@@ -35,10 +35,8 @@ public class EnemyModifierPoison extends EnemyModifier {
 
     @Override
     public void onDuring(long dt) {
-        int type=Tower.TYPE_MAGICAL;
-        if(caster!=null)
-            type=caster.getType();
+        int orb=caster.getMainOrb();
         float d=damagepercent*target.getHp()*dt/1000;
-        target.calDamage(type,d,caster);
+        target.calDamage(orb,d,caster);
     }
 }

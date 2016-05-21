@@ -12,9 +12,6 @@ import com.example.waaaaaaaa123.thetowerdefence.modifier.TowerModifier;
 public class ItemGreenMushroom extends Item {
     private int mId=TowerModifier.MODIFIER_TOWER_SPEEDUP;
     private int stack=1;
-    public ItemGreenMushroom(ItemSlot slot) {
-        super(slot);
-    }
 
     @Override
     public void init() {
@@ -23,10 +20,12 @@ public class ItemGreenMushroom extends Item {
 
     @Override
     public void setUsable() {
-        usable =false;
-        if(block.getId()==Block.TOWER&& Player.getTowerManager().getTower(block).hasModifier(mId)<=1){
+        super.setUsable();
+        if(usable&&block.getId()==Block.TOWER&& Player.getTowerManager().getTower(block).hasModifier(mId)<=stack){
             usable =true;
         }
+        else
+            usable=false;
     }
 
     @Override

@@ -19,13 +19,11 @@ public class EnemyModifierStun extends EnemyModifier {
     @Override
     public void onStack() {
         setDuration(getDuration()+0.1f);
+
     }
 
     @Override
-    public void onStart() {
-
+    public void onDuring(long dt) {
+        target.setStun();
     }
-
-
-    
 }

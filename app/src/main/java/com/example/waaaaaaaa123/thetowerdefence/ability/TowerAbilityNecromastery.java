@@ -13,7 +13,7 @@ public class TowerAbilityNecromastery extends TowerAbility {
 
     @Override
     public void init() {
-        init(ABILITY_TOWER_Necromastery,STATE_KILLED,0);
+        init(ABILITY_TOWER_NECROMASTERY,STATE_KILLED,0);
     }
 
     @Override

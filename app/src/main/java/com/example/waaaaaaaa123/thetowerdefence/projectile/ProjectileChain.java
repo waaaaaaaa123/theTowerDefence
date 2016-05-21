@@ -66,7 +66,7 @@ public class ProjectileChain extends Projectile {
         if(stack>=0){
             Enemy enemy=searchEnemy();
             if(enemy==null){
-                setState(STATE_DEAD);
+                setState(STATE_DYING);
             }
             else{
                 hits.add(enemy);
@@ -74,7 +74,7 @@ public class ProjectileChain extends Projectile {
             }
         }
         else{
-            setState(STATE_DEAD);
+            setState(STATE_DYING);
         }
     }
 }

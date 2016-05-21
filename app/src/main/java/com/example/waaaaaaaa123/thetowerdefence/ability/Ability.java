@@ -41,9 +41,6 @@ public abstract class Ability {
         return timer==0;
     }
 
-    public boolean ruok(int state){
-        return false;
-    }
     public int getId() {
         return id;
     }

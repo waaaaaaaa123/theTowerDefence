@@ -7,12 +7,14 @@ import com.example.waaaaaaaa123.thetowerdefence.Player;
 import com.example.waaaaaaaa123.thetowerdefence.ability.EnemyAbility;
 import com.example.waaaaaaaa123.thetowerdefence.ability.EnemyAbilityDodge;
 import com.example.waaaaaaaa123.thetowerdefence.ability.EnemyAbilityHeal;
+import com.example.waaaaaaaa123.thetowerdefence.block.Block;
 import com.example.waaaaaaaa123.thetowerdefence.block.Grid;
 import com.example.waaaaaaaa123.thetowerdefence.modifier.EnemyModifier;
 import com.example.waaaaaaaa123.thetowerdefence.modifier.EnemyModifierArmorReduce;
 import com.example.waaaaaaaa123.thetowerdefence.modifier.EnemyModifierPoison;
 import com.example.waaaaaaaa123.thetowerdefence.modifier.EnemyModifierSlowDown;
 import com.example.waaaaaaaa123.thetowerdefence.modifier.EnemyModifierStun;
+import com.example.waaaaaaaa123.thetowerdefence.orb.Orb;
 import com.example.waaaaaaaa123.thetowerdefence.projectile.Projectile;
 import com.example.waaaaaaaa123.thetowerdefence.tower.Tower;
 
@@ -31,6 +33,12 @@ public class Enemy implements Comparable<Enemy>{
     public static final int STATUS_UPDATE=0;
     public static final int STATUS_MOVE=1;
     public static final int STATUS_ATTACKLANDED=2;
+    public static final int STATUS_DODGE=3;
+    public static final int STATUS_CAST=4;
+    public static final int STATUS_STUN=5;
+    private int status=STATUS_MOVE;
+
+    private boolean attacked,dodge,stun;
 
 
     private int id=0;
@@ -39,15 +47,17 @@ public class Enemy implements Comparable<Enemy>{
     private float fullHp=100;
     private int bound=1;
     private float armor=0;
+    private float castPoint=0.3f;
     private ArrayList<EnemyAbility> abilities;
+
+    private long castTimer;
 
     private int dp;
     private int attack=1;
 
     private float hp=100;
-    public static final int ARMOR_PHYSICAL=0;
-    public static final int ARMOR_MAGICAL=1;
-    private int type;
+
+    private int mainOrb;
 
     private ArrayList<EnemyModifier> enemyModifiers;
 
@@ -57,7 +67,7 @@ public class Enemy implements Comparable<Enemy>{
     private RectF rect;
     private PointF point;
     private PointF nextPoint;
-    private ArrayList<PointF> path;
+    private ArrayList<Block> path;
     private float lengthToNextPath;
     private int it;
 
@@ -67,8 +77,32 @@ public class Enemy implements Comparable<Enemy>{
         point=new PointF();
         nextPoint=new PointF();
         forward=new PointF();
-        enemyModifiers =new ArrayList<>();
+        enemyModifiers =new ArrayList<>(6);
+        abilities=new ArrayList<>(4);
 
+    }
+    public static final int hpTable[]={10,30,70,130,210,310,500,800,1200,1700,2500};
+    public void init(int speedLvl,int hpLvl,int aId,int abilityLvl){
+        bound=1;
+        armor=0;
+        speed=1+speedLvl*0.3f;
+        fullHp=hpTable[hpLvl];
+        hp=fullHp;
+        for (int i = 0; i < abilityLvl&&aId!=-1; i++) {
+            EnemyAbility ability=EnemyAbility.create(aId, this);
+            if(ability!=null){
+                ability.cast(EnemyAbility.STATE_SPAWN);
+                abilities.add(ability);
+            }
+        }
+        id=aId;
+        switch (aId){
+            case -1:mainOrb=-1;break;
+            case EnemyAbility.ABILITY_ENEMY_DODGE:mainOrb=Orb.ORB_BLUE;break;
+            case EnemyAbility.ABILITY_ENEMY_HEAL:mainOrb=Orb.ORB_YELLOW;break;
+            case EnemyAbility.ABILITY_ENEMY_FLY:mainOrb=Orb.ORB_GREEN;break;
+            case EnemyAbility.ABILITY_ENEMY_ARMOR:mainOrb=Orb.ORB_RED;break;
+        }
     }
 
     public int init(int minhplvl,int mindp){
@@ -104,9 +138,9 @@ public class Enemy implements Comparable<Enemy>{
             }
         }
         if(abilities.size()>1)
-            type=ARMOR_MAGICAL;
+            //orb
 
-        fullHp= (float) (Math.pow(2,seed[3])*10);
+            fullHp= (float) (Math.pow(2,seed[3])*10);
         hp=fullHp;
         bound=seed[4];
         /*Log.i("speed",speed+"");
@@ -116,6 +150,10 @@ public class Enemy implements Comparable<Enemy>{
         Log.i("hp",fullHp+"");
         Log.i("bound",bound+"");
         Log.i("dp",dp+"");*/
+
+        for (EnemyAbility ability : abilities) {
+            ability.cast(EnemyAbility.STATE_SPAWN);
+        }
         return dp;
     }
 
@@ -145,6 +183,11 @@ public class Enemy implements Comparable<Enemy>{
         return state;
     }
 
+    public void setDodge() {
+        dodge=true;
+    }
+
+
     public int getId() {
         return id;
     }
@@ -159,12 +202,16 @@ public class Enemy implements Comparable<Enemy>{
     }
 
     public RectF getRect() {
-        rect.offsetTo(point.x-rect.width()/2,point.y-rect.height()/2);
+        rect.offset(point.x-rect.centerX(),point.y-rect.centerY());
         return rect;
     }
 
     public void setSpeed(float speed) {
         this.speed = speed;
+    }
+
+    public void setStun() {
+        stun=true;
     }
 
     public float getSpeed() {
@@ -179,14 +226,14 @@ public class Enemy implements Comparable<Enemy>{
         this.armor = armor;
     }
 
-    public void setPath(ArrayList<PointF> path) {
+    public void setPath(ArrayList<Block> path) {
         this.path = path;
 
-        point.set(path.get(0));
+        point.set(path.get(0).getCenter());
         float dx=(Player.getRandomSeed().nextFloat()-0.5f)*Grid.getLength()*0.25f;
         float dy=(Player.getRandomSeed().nextFloat()-0.5f)*Grid.getLength()*0.25f;
         point.offset(dx, dy);
-        setNextPoint(path.get(1));
+        setNextPoint(path.get(1).getCenter());
         setForward();
         it=1;
     }
@@ -210,7 +257,7 @@ public class Enemy implements Comparable<Enemy>{
             point.set(nextPoint);
             if(it+1<path.size())
             {
-                setNextPoint(path.get(++it));
+                setNextPoint(path.get(++it).getCenter());
                 long dtt=(long) (dt - lengthToNextPath / (speed* Grid.getLength() )* 1000);
                 setForward();
                 move(dtt);
@@ -242,25 +289,32 @@ public class Enemy implements Comparable<Enemy>{
         }
     }*/
     public void update(long dt){
-        boolean isStun=false;
+
         for (EnemyModifier enemyModifier : enemyModifiers) {
             if (enemyModifier.isAlive()){
                 enemyModifier.update(dt);
-                if(enemyModifier.getId()== EnemyModifier.MODIFIER_STUN)
-                    isStun=true;
             }
         }
-        if(isStun)
-            return;
-
         for (EnemyAbility ability : abilities) {
             ability.update(dt);
+        }
+        if(stun){
+            status=STATUS_STUN;
+            stun=false;
+            return;
+        }
+        for (EnemyAbility ability : abilities) {
             ability.cast(EnemyAbility.STATE_READY);
         }
 
+        status=STATUS_MOVE;
         move(dt);
         /*if(player.getGrid().getBlockByCount(point.x,point.y).getId()== Block.END)
             attack(dt);*/
+    }
+
+    public void setBound(int bound) {
+        this.bound = bound;
     }
 
     public float getHpPercent() {
@@ -275,8 +329,8 @@ public class Enemy implements Comparable<Enemy>{
         return hp;
     }
 
-    public int getType() {
-        return type;
+    public int getMainOrb() {
+        return mainOrb;
     }
 
     public ArrayList<EnemyModifier> getEnemyModifiers() {
@@ -316,30 +370,32 @@ public class Enemy implements Comparable<Enemy>{
                 enemyModifiers.add(enemyModifier);
             }
         }
-            if(mId==EnemyModifier.MODIFIER_POISON &&enemyModifier!=null&&enemyModifier.getStack()<=stack){
-                ((EnemyModifierPoison) enemyModifier).setCaster(caster);
-            }
+        if(mId==EnemyModifier.MODIFIER_POISON &&enemyModifier!=null&&enemyModifier.getStack()<=stack){
+            ((EnemyModifierPoison) enemyModifier).setCaster(caster);
+        }
 
     }
     public void attackLanded(Projectile projectile){
         for (EnemyAbility enemyAbility:abilities){
-            switch (enemyAbility.getId()){
-                case EnemyAbility.ABILITY_ENEMY_DODGE:
-                    if(Player.getRandomSeed().nextFloat()<0.2f)
-                        return;
-            }
+            enemyAbility.cast(EnemyAbility.STATE_ATTACKLANDED);
         }
+        if(dodge){
+            status=STATUS_DODGE;
+            dodge=false;
+            return;
+        }
+
+        status=STATUS_ATTACKLANDED;
 
         for (Integer id : projectile.getModifiers().keySet()) {
             addModifier(id,projectile.getModifiers().get(id),projectile.getCaster());
         }
 
-        calDamage(projectile.getCaster().getType(),projectile.getDamage(),projectile.getCaster());
+        calDamage(projectile.getCaster().getMainOrb(),projectile.getDamage(),projectile.getCaster());
 
     }
-    public void calDamage(int damageType,float damage,Tower caster){
-        if(damageType==type)
-            damage*=0.75;
+    public void calDamage(int orb,float damage,Tower caster){
+        damage*=Orb.calD(orb,mainOrb);
         if(armor>=0){
             damage/=1+0.06*armor;
         }
@@ -356,7 +412,8 @@ public class Enemy implements Comparable<Enemy>{
 
     public void onKilled(){
         hp=0;
-        Player.getShop().earnGold(dp);
+        dp= (int) (abilities.size()*speed*10+fullHp/20);
+        Player.getBag().buy(-dp);
         state=STATE_DEAD;
     }
     public void heal(float healpercent){

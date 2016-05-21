@@ -21,7 +21,7 @@ public class TowerManager implements Iterable<Tower>{
         towers=new ArrayList<Tower>();
     }
 
-
+/*
     public void addTower(int id,RectF rect){
         Tower tower=null;
         switch (id){
@@ -36,14 +36,9 @@ public class TowerManager implements Iterable<Tower>{
         Player.getGrid().getBlock(rect.centerX(), rect.centerY()).setId(Block.TOWER);
         towers.add(tower);
 
-    }
-    public Tower addTower(Block block,int id){
-        Tower tower=new Tower(block);
-        switch (id){
-            case Tower.TOWER_ORB:break;//id==0 means it's an orb tower.
-            case Tower.TOWER_CONE:tower=new ConeTower(block);break;
-        }
-        block.setId(Block.TOWER);
+    }*/
+    public Tower addTower(int id,Block block){
+        Tower tower=Tower.create(id,block);
         towers.add(tower);
         return tower;
     }

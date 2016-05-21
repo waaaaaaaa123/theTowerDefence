@@ -19,7 +19,7 @@ public class EnemyAbilityHeal extends EnemyAbility {
 
     @Override
     public void init() {
-        init(ABILITY_ENEMY_HEAL,STATE_READY,1);
+        init(ABILITY_ENEMY_HEAL,STATE_READY,3);
     }
 
     private boolean isInRange(Enemy enemy){

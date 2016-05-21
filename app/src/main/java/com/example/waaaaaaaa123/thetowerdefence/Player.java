@@ -2,6 +2,7 @@ package com.example.waaaaaaaa123.thetowerdefence;
 
 import android.graphics.RectF;
 
+import com.example.waaaaaaaa123.thetowerdefence.Animation.Animator;
 import com.example.waaaaaaaa123.thetowerdefence.ability.AbilityBook;
 import com.example.waaaaaaaa123.thetowerdefence.block.Block;
 import com.example.waaaaaaaa123.thetowerdefence.block.Grid;
@@ -29,12 +30,13 @@ public class Player {
     public static final int STATE_PREPARE=0;
     public static final int STATE_DEFENCE=1;
     public static final int STATE_FAIL=2;
+    public static final int STATE_PAUSE=3;
 
     //private int gold=625;
     private static int hp;
     private static int state;
 
-    private static RectF topRect,mainRect,bottomRect;
+    public static RectF rect,topRect,mainRect,bottomRect;
 
     //private Button playButton;
     private static ArrayList<Button> buttons;
@@ -47,17 +49,18 @@ public class Player {
     private static Bag bag;
     private static TowerUI towerUI;
     private static AbilityBook abilityBook;
-    private static Shop shop;
-    private static Item focusItem;
+    //private static Item focusItem;
     private static Random randomSeed;
-
+    //public  Animator animator;
 
     public Player(RectF rect){
         float l=Math.abs((rect.height()-rect.width())/2);
+        this.rect=rect;
         topRect=new RectF(rect.left,rect.top,rect.right,rect.top+l/2);
         mainRect=new RectF(rect.left,topRect.bottom,rect.right,topRect.bottom+rect.width());
         bottomRect=new RectF(rect.left,mainRect.bottom,rect.right,rect.bottom);
-
+        mainRect.inset(mainRect.width()*0.1f,mainRect.height()*0.1f);
+        //animator=new Animator(mainRect,0f);
         init();
 
     }
@@ -67,13 +70,13 @@ public class Player {
 
         randomSeed=new Random();
 
-        grid=new Grid(mainRect,16,16);
-        grid.setBlockIdByCount(0, 0, Block.START);
-        grid.setBlockIdByCount(8, 5, Block.END);
+        grid=new Grid(mainRect,12,12);
+        grid.setBlockIdByCount(1, 1, Block.START);
+        grid.setBlockIdByCount(10, 10, Block.END);
         bag=new Bag();
         towerUI=new TowerUI();
         abilityBook=new AbilityBook();
-        shop=new Shop();
+        //shop=new Shop();
 
         towerManager=new TowerManager();
         projectileManager=new ProjectileManager();
@@ -83,14 +86,11 @@ public class Player {
 
 
 
-        for (int i = 0; i < 9; i++) {
-            bag.addItem(1);
-            bag.addItem(Item.ITEM_BOMBTOWER);
-            bag.addItem(Item.ITEM_AXETOWER);
-            bag.addItem(Item.ITEM_WHIPTOWER);
-            bag.addItem(Item.ITEM_SWORDTOWER);
-        }
-        shop.earnGold(10000);
+            bag.addItem(Item.ITEM_BUILDBLOCK,10);
+            bag.addItem(Item.ITEM_BOMBTOWER,10);
+            bag.addItem(Item.ITEM_ABILITY_STATUSUP,10);
+            bag.addItem(Item.ITEM_CHECKBLOCK,10);
+
 
         wave.init();
         buttons=new ArrayList<>();
@@ -112,21 +112,27 @@ public class Player {
     }
 
     public void update(long dt){
+        //animator.update(dt);
         switch (state){
             case STATE_PREPARE:
                 towerManager.update(dt);
                 //wave.update(dt);
                 projectileManager.update(dt);
+                grid.update(dt);
                 break;
             case STATE_DEFENCE:
                 towerManager.update(dt);
                 wave.update(dt);
                 projectileManager.update(dt);
+                grid.update(dt);
                 break;
             case STATE_FAIL:
                 towerManager.update(dt);
                 wave.update(dt);
                 projectileManager.update(dt);
+                grid.update(dt);
+                break;
+            case STATE_PAUSE:
                 break;
         }
     }
@@ -134,6 +140,7 @@ public class Player {
     public static void addHp(int add){
         hp+=add;
         if(hp<=0&&state!=STATE_FAIL){
+            hp=0;
             state=STATE_FAIL;
             menus.push(new Menu());
         }
@@ -193,10 +200,6 @@ public class Player {
         return wave;
     }
 
-    public static Shop getShop() {
-        return shop;
-    }
-
     public static Random getRandomSeed() {
         return randomSeed;
     }
@@ -205,13 +208,13 @@ public class Player {
         return dialogs;
     }
 
-    public static Item getFocusItem() {
+    /*public static Item getFocusItem() {
         return focusItem;
     }
 
     public static void setFocusItem(Item focusItem) {
         Player.focusItem = focusItem;
-    }
+    }*/
 
     public static AbilityBook getAbilityBook() {
         return abilityBook;

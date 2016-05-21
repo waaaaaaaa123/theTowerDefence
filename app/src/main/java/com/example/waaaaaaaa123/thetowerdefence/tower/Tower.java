@@ -61,9 +61,11 @@ public class Tower {
 
     private boolean builded,finded,aimed,loaded,cooled;
     private float degree;
-    private float buildingPoint=2f;
+    private float offX=1f;
+    private float offY=1f;
+    private float buildingPoint=0.3f;
     private float degreePoint=0.5f;
-    private float castPoint=0.1f;
+    private float castPoint=0.2f;
     private float projectileSpeed=3f;
 
     private long buildTimer=0;
@@ -73,8 +75,6 @@ public class Tower {
 
     public static final int TYPE_PHYSICAL=0;
     public static final int TYPE_MAGICAL=1;
-    private int type;
-    private int mushroom;
     protected float attackMin,attackMax;
     //protected float attackBonus=0;
     //protected float damage;
@@ -104,21 +104,25 @@ public class Tower {
     protected Enemy lastKilled;
     protected Projectile projectile;
 
-
-    public Tower(RectF rect){
-        this.rect=new RectF(rect);
-        block=Player.getGrid().getBlock(rect.centerX(),rect.centerY());
-        //point=new PointF(rect.centerX(),rect.centerY());
-        abilities=new ArrayList<>(4);
-        modifiers=new ArrayList<>(3);
-        slots=new ArrayList<>(4);
-        orbs=new ArrayList<>(4);
-        enemies=new HashSet<>(5);
-        init();
+    public static Tower create(int id,Block block){
+        Tower tower=null;
+        switch (id){
+            case Tower.TOWER_ORB:tower=new Tower(block);break;//id==0 means it's an orb tower.
+            case Tower.TOWER_CONE:tower=new ConeTower(block);break;
+            case Tower.TOWER_AXE:tower=new AxeTower(block);break;
+            case Tower.TOWER_WHIP:tower=new WhipTower(block);break;
+            case Tower.TOWER_SWORD:tower=new SwordTower(block);break;
+            case Tower.TOWER_BOMB:tower=new BombTower(block);break;
+            case Tower.TOWER_CHAIN:tower=new ChainTower(block);break;
+            case Tower.TOWER_SPLIT:tower=new SplitTower(block);break;
+        }
+        block.setId(Block.TOWER);
+        return tower;
     }
     public Tower(Block block){
         this.block=block;
         rect=new RectF(block.getRect());
+        rect.inset(rect.width()*0.3f,rect.height()*0.3f);
         //point=new PointF(rect.centerX(),rect.centerY());
         abilities=new ArrayList<>(4);
         modifiers=new ArrayList<>(3);
@@ -138,12 +142,11 @@ public class Tower {
 
     }
     public void init(){
-     init(0,0,0,0,1f,1f,0.7f,2f,2f,0.5f,0.1f,3f);
+        init(0,0,0,0,1f,1f,0.7f,2f,0.3f,0.5f,0.15f,3f);
     }
-    public void init(int id,int type,int projectileId,float attackMin,float attackMax,float speed,float range){
+    public void init(int id,int type,int projectileId,float attackMin,float attackMax,float speed,float range){//remove this
         this.id=id;
         this.projectileId=projectileId;
-        this.type=type;
         this.attackMin=attackMin;
         this.attackMax=attackMax;
         this.speed=speed;
@@ -200,22 +203,16 @@ public class Tower {
         return rect;
     }
 
-    public int getType() {
-        return type;
-    }
 
 
     public float getDegree(){
         return degree;
     }
-    public int getMushroom() {
-        return mushroom;
-    }
 
 
     public void attackUp(float bonus){
-            attackMin+=bonus;
-            attackMax+=bonus;
+        attackMin+=bonus;
+        attackMax+=bonus;
     }
     public void speedUp(float bonus){
         speed+=bonus;
@@ -229,15 +226,6 @@ public class Tower {
     public void combo(int n){
         comboNum+=n;
     }
-    /*public void onRedMushroom(){
-        mushroom++;
-    }
-    public void onGreenMushroom(){
-        mushroom++;
-    }
-    public void onYellowMushroom(){
-        mushroom++;
-    }*/
     public void onKill(Enemy enemy){
         kill++;
         lastKilled=enemy;
@@ -245,20 +233,18 @@ public class Tower {
             ability.cast(TowerAbility.STATE_KILLED);
         }
         lastKilled=null;
-        /*for (TowerAbility ability : abilities) {
-            switch (ability.getId()){
-                case TowerAbility.ABILITY_TOWER_HEAL:
-                    ability.cast();
-                    break;
-                case TowerAbility.ABILITY_TOWER_GREED:
-                    Player.getShop().earnGold((int) (enemy.getDp()*0.2));
-                    break;
-            }
-        }*/
     }
 
     public int getKill() {
         return kill;
+    }
+
+    public ArrayList<Integer> getOrbs() {
+        return orbs;
+    }
+
+    public int getMainOrb() {
+        return mainOrb;
     }
 
     public Enemy getLastKilled() {
@@ -323,14 +309,14 @@ public class Tower {
         }
         return d;
     }
-    private void beforeAttack(){}
     protected void afterAttack(long dt){
         if(!finded||!cooled||!aimed){
             loaded=false;
             loadTimer=0;
             float off=dt/(castPoint*1000);
             rect.offset(off*(block.getRect().centerX()-rect.centerX()),0 );
-            rect.inset(-off*(block.getRect().width()-rect.width()), -off*(block.getRect().height()-rect.height()));
+            rect.inset(-off*(block.getRect().width()*offX-rect.width()), -off*(block.getRect().height()*offY-rect.height()));
+
         }
     }
     public void attack(){
@@ -432,6 +418,10 @@ public class Tower {
         }*/
     }
     public void update(long dt){//needs to reverse??
+        if(!builded){
+            onBuilding(dt);
+            return;
+        }
         findTarget();
         onAiming(dt);
         onLoading(dt);
@@ -445,8 +435,15 @@ public class Tower {
     }
     protected void onBuilding(long dt){
         buildTimer+=dt;
-        if(buildTimer>=buildingPoint*1000)
+        float l=dt*Grid.getLength()*projectileSpeed/1000*0.8f;
+        rect.inset(-l,-l);
+        if(buildTimer>=buildingPoint*1000*0.6f)
+            rect.inset(l*1.5f,l*1.5f);
+
+        if(buildTimer>=buildingPoint*1000){
+            buildTimer=0;
             builded=true;
+        }
     }
     protected void onAiming(long dt){
         aimed=false;
@@ -489,6 +486,7 @@ public class Tower {
         else{
             float v = Grid.getLength()*projectileSpeed/1000;
             rect.set(block.getRect());
+            rect.inset(block.getRect().width()*(1-offX)/2, block.getRect().height()*(1-offY)/2);
             if(loadTimer<castPoint*0.6f*1000){
                 float a=v/(castPoint*0.6f*1000);
                 float l=(v-a*loadTimer+v)/2*loadTimer;
@@ -545,6 +543,12 @@ public class Tower {
         level++;
         orbs.clear();
 
+        rect.set(block.getRect());
+        rect.inset(rect.width()*0.3f,rect.height()*0.3f);
+        builded=false;
+        buildTimer=0;
+
+
         Log.i("levelup","id "+id+" mainOrb "+mainOrb+" level "+level);
     }
     private void onLevel0(int s){
@@ -553,6 +557,7 @@ public class Tower {
             case 0x1:id=TOWER_WHIP;projectileId=Projectile.PROJECTILE_WHIP;break;
             case 0x2:id=TOWER_SWORD;projectileId=Projectile.PROJECTILE_SWORD;break;
         }
+        id=TOWER_ORB;
     }
     private void onLevel2(int s){
 
@@ -572,6 +577,7 @@ public class Tower {
 
             case 0x012:id=Player.getRandomSeed().nextInt(11)+1;projectileId=Player.getRandomSeed().nextInt(11)+1;break;//a random tower
         }
+
     }
     private void onLevel3(int s){
         TowerAbility ability=null;

@@ -4,6 +4,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
 
+import com.example.waaaaaaaa123.thetowerdefence.Animation.Animator;
 import com.example.waaaaaaaa123.thetowerdefence.Player;
 import com.example.waaaaaaaa123.thetowerdefence.block.Grid;
 import com.example.waaaaaaaa123.thetowerdefence.enemy.Enemy;
@@ -33,7 +34,7 @@ public abstract class Projectile implements Comparable<Projectile> {
 
     public static final int STATE_SPAWN=0;
     public static final int STATE_ALIVE=1;
-    public static final int STATE_DYING=2;
+    public static final int STATE_DYING =2;
     public static final int STATE_DEAD=3;
 
     private int id;
@@ -44,6 +45,10 @@ public abstract class Projectile implements Comparable<Projectile> {
     private RectF rect;
     private float degree;
 
+    private int alpha=255;
+
+    private long timer;
+
     protected Tower caster;
     protected Enemy target;
     protected PointF targetPoint;
@@ -53,6 +58,7 @@ public abstract class Projectile implements Comparable<Projectile> {
     private float damage=10;
 
     private HashMap<Integer,Integer> modifiers;
+    private Animator animator;
 
     public Projectile(Tower caster,Enemy target){
         rect=new RectF();
@@ -60,6 +66,7 @@ public abstract class Projectile implements Comparable<Projectile> {
         targetPoint=new PointF();
         forward=new PointF();
         modifiers=new HashMap<>(4);
+        animator=new Animator(rect,10);
         init();
         recycle(caster,target);
     }
@@ -77,11 +84,15 @@ public abstract class Projectile implements Comparable<Projectile> {
         this.caster=caster;
         this.target=target;
 
+
         degree=caster.getDegree();
         double radians= toRadians(degree);
         forward.set((float) cos(radians),(float) sin(radians));
 
         speed=caster.getProjectileSpeed();
+        timer= (long) ((Player.getRandomSeed().nextFloat()*0.6f+0.4f)*1000);
+        alpha=255;
+
         float l=Grid.getLength()*0.5f;
         rect.set(-l / 2, -l / 3, l / 2, l / 3);
         rect.offset(caster.getBlock().getRect().centerX(), caster.getBlock().getRect().centerY());
@@ -89,10 +100,15 @@ public abstract class Projectile implements Comparable<Projectile> {
         initTargetPoint();
 
         aim(targetPoint);
-        rect.offset(caster.getRect().width()/2*forward.x,caster.getRect().width()/2*forward.y);
+        rect.offset(caster.getRect().width() / 2 * forward.x, caster.getRect().width() / 2 * forward.y);
         rect.offset(rect.width()/2*forward.x,rect.width()/2*forward.y);
+
+        animator.recycle();
+
         modifiers.clear();
         impetus=0;
+
+
         state=STATE_SPAWN;
     }
 
@@ -137,6 +153,10 @@ public abstract class Projectile implements Comparable<Projectile> {
         return id;
     }
 
+    public int getAlpha() {
+        return alpha;
+    }
+
     public RectF getRect() {
         //rect.offsetTo(point.x-rect.width()/2,point.y-rect.height()/2);
         return rect;
@@ -151,8 +171,16 @@ public abstract class Projectile implements Comparable<Projectile> {
         return caster;
     }
 
+    public Animator getAnimator() {
+        return animator;
+    }
+
     public Enemy getTarget() {
         return target;
+    }
+
+    public float getTimerF() {
+        return timer/1000;
     }
 
     public void setTarget(Enemy target) {
@@ -199,7 +227,7 @@ public abstract class Projectile implements Comparable<Projectile> {
         if(target!=null){
             target.attackLanded(this);
         }
-            state=STATE_DEAD;
+        state= STATE_DYING;
     }
     public void checkTargetPoint(){
         if(target!=null)
@@ -242,8 +270,8 @@ public abstract class Projectile implements Comparable<Projectile> {
                 onHit();
         }
         else
-            if(l>=dl)
-                onHit();
+        if(l>=dl)
+            onHit();
         /*degree+=0.3*l*360/(2*Math.PI*10);
         if(degree>360) degree-=360;*/
 
@@ -257,9 +285,22 @@ public abstract class Projectile implements Comparable<Projectile> {
 
     }
     public void update(long dt){
-        move(dt);
+        animator.update(dt);
+        switch (state){
+            case STATE_ALIVE:move(dt);break;
+            case STATE_DYING:onDying(dt);break;
+
+        }
     }
 
+    protected void onDying(long dt){
+        timer-=dt;
+        float l=5*dt*speed/1000;
+        alpha=0;
+        rect.inset(-l,-l);
+        if(timer<0)
+            state=STATE_DEAD;
+    }
     @Override
     public int compareTo(Projectile another) {
         return Float.compare(this.getRect().centerY(),another.getRect().centerY());

@@ -12,7 +12,7 @@ public class TowerAbilityNethertoxin extends TowerAbility {
 
     @Override
     public void init() {
-        init(ABILITY_TOWER_Nethertoxin,STATE_ATTACK,0);
+        init(ABILITY_TOWER_NETHERTOXIN,STATE_ATTACK,0);
     }
 
     @Override

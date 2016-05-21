@@ -2,14 +2,16 @@ package com.example.waaaaaaaa123.thetowerdefence.tower;
 
 import android.graphics.RectF;
 
+import com.example.waaaaaaaa123.thetowerdefence.block.Block;
 import com.example.waaaaaaaa123.thetowerdefence.projectile.Projectile;
 
 /**
  * Created by aa081_000 on 2016/1/20.
  */
 public class SwordTower extends Tower{
-    public SwordTower(RectF rect) {
-        super(rect);
+
+    public SwordTower(Block block) {
+        super(block);
     }
 
     @Override

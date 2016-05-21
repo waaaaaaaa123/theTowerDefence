@@ -11,9 +11,6 @@ import com.example.waaaaaaaa123.thetowerdefence.tower.Tower;
 public class ItemYellowMushroom extends Item {
     private int mId=TowerModifier.MODIFIER_TOWER_RANGEUP;
     private int stack=1;
-    public ItemYellowMushroom(ItemSlot slot) {
-        super(slot);
-    }
 
     @Override
     public void init() {
@@ -22,10 +19,12 @@ public class ItemYellowMushroom extends Item {
 
     @Override
     public void setUsable() {
-        usable =false;
-        if(block.getId()==Block.TOWER&& Player.getTowerManager().getTower(block).hasModifier(mId)<=1){
+
+        if(usable&&block.getId()==Block.TOWER&& Player.getTowerManager().getTower(block).hasModifier(mId)<=1){
             usable =true;
         }
+        else
+            usable=false;
     }
 
     @Override

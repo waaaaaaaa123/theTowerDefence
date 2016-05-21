@@ -7,9 +7,6 @@ import com.example.waaaaaaaa123.thetowerdefence.block.Block;
  * Created by aa081_000 on 2016/2/24.
  */
 public class ItemCheckBlock extends Item {
-    public ItemCheckBlock(ItemSlot slot) {
-        super(slot);
-    }
 
     @Override
     public void init() {
@@ -24,10 +21,6 @@ public class ItemCheckBlock extends Item {
         }
     }
 
-    @Override
-    public void buy() {
-        cost*=2;
-    }
 
     @Override
     public void use() {

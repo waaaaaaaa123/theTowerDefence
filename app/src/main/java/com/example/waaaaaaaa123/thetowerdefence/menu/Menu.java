@@ -17,15 +17,22 @@ import java.util.ArrayList;
 public class Menu {
     private ArrayList<Button> buttons;
     private RectF rect;
+    private int state;
     public Menu(){
-        rect=new RectF(-200,-300,200,300);
-        rect.offset(Player.getMainRect().centerX(),Player.getMainRect().centerY());
+        float l=Player.mainRect.width();
+        rect=new RectF(-l/2,-l/2,l/2,l/2);
+        rect.inset(l*0.1f,-l*0.1f);
+        rect.offset(Player.mainRect.centerX(),Player.mainRect.centerY());
         buttons=new ArrayList<>(2);
-        float left=rect.left,top=rect.top,right=rect.right,l=rect.height()/6;
+        float left=rect.left,top=rect.top,right=rect.right;
+        l=rect.height()/6;
         top+=l;
         buttons.add(new NewGameButton(new RectF(left,top,right,top+l)));
         top+=l;
         buttons.add(new ExitButton(new RectF(left,top,right,top+l)));
+
+        state=Player.getState();
+        Player.setState(Player.STATE_PAUSE);
     }
 
     public RectF getRect() {
@@ -49,6 +56,8 @@ public class Menu {
 
 
     public void onNotClick(MotionEvent e) {
-        Player.getMenus().pop();
+        Player.setState(state);
+        if(state!=Player.STATE_FAIL)
+            Player.getMenus().pop();
     }
 }

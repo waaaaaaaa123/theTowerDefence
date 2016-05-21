@@ -58,10 +58,10 @@ public class Shop {
 
     }
     public void buyItem(ItemSlot slot){
-        if(Player.getBag().addItem(slot.getItem().getId())){
+        if(Player.getBag().addItem(slot.getItem().getId(),1)){
             gold-=slot.getItem().getCost();
             slot.stackDown();
-            slot.getItem().buy();
+            //slot.getItem().buy();
         }
 
     }

@@ -19,7 +19,7 @@ public class TowerAbilityGreed extends TowerAbility {
 
     @Override
     protected boolean cast() {
-        Player.getShop().earnGold((int) (caster.getLastKilled().getDp()*bonus));
+        Player.getBag().buy((int) (-caster.getLastKilled().getDp()*bonus));
         return true;
     }
 }

@@ -1,9 +1,12 @@
 package com.example.waaaaaaaa123.thetowerdefence.block;
 
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
+
+import com.example.waaaaaaaa123.thetowerdefence.Player;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,12 +21,13 @@ public class Grid implements Iterable<Block>{
      * Point is not for pixel coordinates,Point is Block Matrix's coordinates;
      * */
     private ArrayList<Block> blocks;
+    private ArrayList<Block> path;
     private Point start;
     private ArrayList<Point> checks;
     private Point end;
     private static float length;
     private RectF rect;
-    private int xSize,ySize;
+    protected int xSize,ySize;
     public Grid(RectF rect,int xSize,int ySize){
         this.xSize=xSize;
         this.ySize=ySize;
@@ -44,12 +48,30 @@ public class Grid implements Iterable<Block>{
             }
             top+=length;
         }
+
     }
 
     public void update(long dt){
         for (Block block : blocks) {
             block.update(dt);
         }
+
+    }
+
+    public void onFocus(float x,float y){
+        Block block=getBlock(x,y);
+        int color= Color.GRAY;//this is not finished yet
+        //block.setColor(color,1000);
+/*
+        int rc=color;
+        float du=1.1f-0.1f;
+        Grid grid=Player.getGrid();
+        Point c=grid.getBlockCount(block);
+        if(c.x-1>=0)grid.getBlockByCount(c.x-1,c.y).setColor(rc,du);
+        if(c.x+1<grid.xSize)grid.getBlockByCount(c.x+1,c.y).setColor(rc,du);
+        if(c.y-1>=0) grid.getBlockByCount(c.x, c.y - 1).setColor(rc,du);
+        if(c.y+1<grid.ySize) grid.getBlockByCount(c.x,c.y+1).setColor(rc,du);*/
+
     }
     public Block getBlockByCount(int xCount, int yCount){
         if(xCount<xSize&&xCount>=0&&yCount<ySize&&yCount>=0)
@@ -107,6 +129,19 @@ public class Grid implements Iterable<Block>{
         }
         return null;
     }
+    public void removeCheck(Block block){
+        Point c=getBlockCount(block);
+        for (Point check : checks) {
+            if(check.x==c.x&&check.y==c.y){
+                c=check;
+                break;
+            }
+        }
+        if(checks.remove(c)&&Player.getState()==Player.STATE_PREPARE){
+            setPath();
+            Player.getWave().setPath();
+        }
+    }
     class PathBuilder{
         private int[][] m;
         private Point[][] from;
@@ -143,13 +178,21 @@ public class Grid implements Iterable<Block>{
         public void recycle(Point start,Point end,int bound){
 
         }
-        public ArrayList<PointF> getPath(){
+       /* public ArrayList<PointF> getPath(){
             if(from[end.y][end.x]==null)return null;
             ArrayList<PointF> path= new ArrayList<>(m[end.y][end.x] + 1);
             for(Point c=end;c!=null;c=from[c.y][c.x]){
                 path.add(0, getBlockByCount(c.x, c.y).getCenter());
             }
             return path;
+        }*/
+        public ArrayList<Block> getPath(){
+            if(from[end.y][end.x]==null)return null;
+            ArrayList<Block> p= new ArrayList<>(m[end.y][end.x] + 1);
+            for(Point c=end;c!=null;c=from[c.y][c.x]){
+                p.add(0, getBlockByCount(c.x, c.y));
+            }
+            return p;
         }
         private void relax(){
             while(!list.isEmpty())
@@ -177,11 +220,19 @@ public class Grid implements Iterable<Block>{
 
             }
         }
+    }//class
+
+    public void setPath(){
+        path=buildPath(1);
     }
 
-    public ArrayList<PointF> buildPath(int bound){
+    public ArrayList<Block> getPath() {
+        return path;
+    }
+
+    public ArrayList<Block> buildPath(int bound){
         PathBuilder pathBuilder;
-        ArrayList<PointF> path=new ArrayList<>();
+        ArrayList<Block> p=new ArrayList<>();
         Point from=start,to=end;
         for (Point check : checks) {
             to=check;
@@ -189,8 +240,8 @@ public class Grid implements Iterable<Block>{
             if(pathBuilder.getPath()==null)
                 return null;
             else{
-                path.addAll(pathBuilder.getPath());
-                path.remove(path.size()-1);
+                p.addAll(pathBuilder.getPath());
+                p.remove(p.size()-1);
             }
             from=to;
         }
@@ -199,11 +250,11 @@ public class Grid implements Iterable<Block>{
         if(pathBuilder.getPath()==null)
             return null;
         else{
-            path.addAll(pathBuilder.getPath());
+            p.addAll(pathBuilder.getPath());
             /*for (PointF pointF : path) {
             Log.i("path", pointF.x+" "+pointF.y);
             }*/
-            return path;
+            return p;
         }
     }
     public static float getLength() {

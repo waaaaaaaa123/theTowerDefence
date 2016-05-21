@@ -3,6 +3,7 @@ package com.example.waaaaaaaa123.thetowerdefence.tower;
 import android.graphics.RectF;
 
 import com.example.waaaaaaaa123.thetowerdefence.Player;
+import com.example.waaaaaaaa123.thetowerdefence.block.Block;
 import com.example.waaaaaaaa123.thetowerdefence.enemy.Enemy;
 import com.example.waaaaaaaa123.thetowerdefence.projectile.Projectile;
 
@@ -14,8 +15,8 @@ import java.util.HashSet;
 public class SplitTower extends Tower {
     private int split=5;
     private HashSet<Enemy> enemies;
-    public SplitTower(RectF rect) {
-        super(rect);
+    public SplitTower(Block block) {
+        super(block);
         enemies=new HashSet<>(split);
     }
 

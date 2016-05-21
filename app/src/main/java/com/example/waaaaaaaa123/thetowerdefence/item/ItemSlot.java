@@ -9,12 +9,19 @@ import com.example.waaaaaaaa123.thetowerdefence.dialog.DialogItem;
  * Created by aa081_000 on 2016/1/25.
  */
 public class ItemSlot {
+
+    private static float length;
+
     private Item item;
     private int stack;
     private RectF rect;
     private boolean focus;
     private boolean hold;
     private boolean drag;
+
+    public static final int TYPE_BAG=0;
+    public static final int TYPE_SHOP=1;
+    protected int type;
 
 
     public ItemSlot(RectF rect){
@@ -37,6 +44,14 @@ public class ItemSlot {
         return rect;
     }
 
+    public static void setLength(float length) {
+        ItemSlot.length = length;
+    }
+
+    public static float getLength() {
+        return length;
+    }
+
     public Item getItem() {
         return item;
     }
@@ -45,23 +60,19 @@ public class ItemSlot {
         this.item = item;
     }
     public void addItem(int id,int num){
-        if(item==null){
-            switch(id){
-                case Item.ITEM_BUILDBLOCK:item=new ItemBuildBlock(this);break;
-                case Item.ITEM_GREENMUSHROOM:item=new ItemGreenMushroom(this);break;
-                case Item.ITEM_REDMUSHROOM:item=new ItemRedMushroom(this);break;
-                case Item.ITEM_YELLOWMUSHROOM:item=new ItemYellowMushroom(this);break;
-                case Item.ITEM_AXETOWER:item=new ItemAxeTower(this);break;
-                case Item.ITEM_WHIPTOWER:item=new ItemWhipTower(this);break;
-                case Item.ITEM_SWORDTOWER:item=new ItemSwordTower(this);break;
-                case Item.ITEM_BOMBTOWER:item=new ItemBombTower(this);break;
-                case Item.ITEM_CONETOWER:item=new ItemConeTower(this);break;
-                case Item.ITEM_CHAINTOWER:item=new ItemChainTower(this);break;
-                case Item.ITEM_SPLITTOWER:item=new ItemSplitTower(this);break;
-                case Item.ITEM_CHECKBLOCK:item=new ItemCheckBlock(this);break;
-            }
-            stack=num;
-        }
+        item=Item.create(id,num);
+        if(type==TYPE_SHOP)
+            item.setShop(true);
+        if(type==TYPE_BAG)
+            item.setBag(true);
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void removeItem(){
+        item=null;
     }
     public int getStack() {
         return stack;
@@ -94,6 +105,12 @@ public class ItemSlot {
                 Player.getDialogs().pop();
             hold=false;
         }
+    }
+    public void swap(ItemSlot slot){
+        Item t=slot.item;
+        slot.item=item;
+        item=t;
+
     }
     public void onDrag(float x,float y){
         item.onFocus(x, y);

@@ -20,6 +20,6 @@ public class ShopButton extends Button {
 
     @Override
     public void onClick() {
-        Player.getShop().turnOpen();
+        //Player.getShop().turnOpen();
     }
 }

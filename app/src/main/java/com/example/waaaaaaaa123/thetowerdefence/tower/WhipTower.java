@@ -3,6 +3,7 @@ package com.example.waaaaaaaa123.thetowerdefence.tower;
 import android.graphics.RectF;
 
 import com.example.waaaaaaaa123.thetowerdefence.Player;
+import com.example.waaaaaaaa123.thetowerdefence.block.Block;
 import com.example.waaaaaaaa123.thetowerdefence.enemy.Enemy;
 import com.example.waaaaaaaa123.thetowerdefence.projectile.Projectile;
 import com.example.waaaaaaaa123.thetowerdefence.projectile.ProjectileWhip;
@@ -12,12 +13,11 @@ import com.example.waaaaaaaa123.thetowerdefence.projectile.ProjectileWhip;
  */
 public class WhipTower extends Tower {
     ProjectileWhip whip;
-    public WhipTower(RectF rect) {
-        super(rect);
 
-        /*whip= (ProjectileWhip) Player.getProjectileManager().addProjectile(Projectile.PROJECTILE_WHIP,this,null);
-        whip.setDamage(damage);*/
+    public WhipTower(Block block) {
+        super(block);
     }
+
 
     @Override
     public void init() {

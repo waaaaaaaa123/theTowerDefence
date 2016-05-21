@@ -2,9 +2,6 @@ package com.example.waaaaaaaa123.thetowerdefence;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Point;
-import android.graphics.PointF;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -12,20 +9,10 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
 
-import com.example.waaaaaaaa123.thetowerdefence.block.Block;
-import com.example.waaaaaaaa123.thetowerdefence.block.Grid;
 import com.example.waaaaaaaa123.thetowerdefence.button.NewGameButton;
-import com.example.waaaaaaaa123.thetowerdefence.enemy.Enemy;
-import com.example.waaaaaaaa123.thetowerdefence.enemy.Wave;
-import com.example.waaaaaaaa123.thetowerdefence.item.Bag;
-import com.example.waaaaaaaa123.thetowerdefence.item.Item;
-import com.example.waaaaaaaa123.thetowerdefence.projectile.ProjectileManager;
-import com.example.waaaaaaaa123.thetowerdefence.tower.Tower;
-import com.example.waaaaaaaa123.thetowerdefence.tower.TowerManager;
+import com.example.waaaaaaaa123.thetowerdefence.drawer.DrawableManager;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.logging.Handler;
 
@@ -38,6 +25,7 @@ public class MainGameThread extends Thread implements View.OnTouchListener {
     private Context context;
     private long lastTime=0;
     private Queue<MotionEvent> joy;
+
     private boolean polling=false;
     private RectF rect;
 
@@ -113,9 +101,8 @@ public class MainGameThread extends Thread implements View.OnTouchListener {
         while(!joy.isEmpty()){
             MotionEvent e=joy.poll();
             gestureDetector.onTouchEvent(e);
-            if(e.getAction()==MotionEvent.ACTION_UP){
-                myGestureListener.onUp(e);
-                return ;
+            if(myGestureListener.onEvent(e)){
+                return;
             }
         }
     }

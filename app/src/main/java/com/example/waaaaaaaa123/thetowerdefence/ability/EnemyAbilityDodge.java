@@ -15,20 +15,17 @@ public class EnemyAbilityDodge extends EnemyAbility {
 
     @Override
     public void init() {
-        init(ABILITY_ENEMY_DODGE,STATE_ATTACKLANDED,0);
+        init(ABILITY_ENEMY_DODGE, STATE_ATTACKLANDED, 0);
     }
+
 
     @Override
     protected boolean cast() {
-        return false;
-    }
-
-    @Override
-    public boolean ruok(int s) {
-        if(s== Enemy.STATUS_ATTACKLANDED){
-            if(Player.getRandomSeed().nextFloat()<dodge)
-                return true;
+        if(Player.getRandomSeed().nextFloat()<dodge){
+            caster.setDodge();
+            return true;
         }
         return false;
     }
+
 }
