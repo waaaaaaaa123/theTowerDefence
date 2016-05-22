@@ -200,12 +200,12 @@ public class DrawableManager {
 
         drawPlayer(canvas);
         drawFocusItem(canvas);
-        drawMenu(canvas);
         if(Player.info)drawInfo(canvas);
+        if(Player.menu)drawMenu(canvas);
     }
     public void drawMenu(Canvas canvas){
-        if(!Player.getMenus().empty()){
-            Menu menu=Player.getMenus().peek();
+            //Menu menu=Player.getMenus().peek();
+            Menu menu=Player.theMenu;
             Paint paint=new Paint();
             paint.setColor(Color.BLACK);
             paint.setAlpha(128);
@@ -223,7 +223,7 @@ public class DrawableManager {
                 paint.setColor(Color.BLACK);
                 canvas.drawText(button.getString(),rect.centerX(),rect.bottom-5,paint);
             }
-        }
+
     }
     public void drawBackground(Canvas canvas){
         canvas.drawColor(Color.WHITE);
@@ -496,13 +496,12 @@ public class DrawableManager {
 
         canvas.save();
         canvas.rotate(-90, towerIcon.centerX(), towerIcon.centerY());
+        canvas.drawBitmap(bitmap, null, rect, null);
         if(tower.getId()==Tower.TOWER_ORB){
             bitmap=orbPaints.get(tower.getMainOrb());
-            rect.set(tower.getRect());
-            rect.inset(tower.getRect().width()*0.2f,tower.getRect().height()*0.2f);
+            rect.inset(rect.width() * 0.2f, rect.height() * 0.2f);
             canvas.drawBitmap(bitmap,null,rect,null);
         }
-        canvas.drawBitmap(bitmap, null, rect, null);
         canvas.restore();
 
         paint.setColor(Color.BLACK);

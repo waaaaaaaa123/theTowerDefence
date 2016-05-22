@@ -39,7 +39,8 @@ public class Player {
 
     public static RectF rect,topRect,mainRect,bottomRect;
 
-    public static boolean info=false;
+    public static boolean info=false,menu=false;
+    public static Menu theMenu;
 
     //private Button playButton;
     private static ArrayList<Button> buttons;
@@ -98,6 +99,7 @@ public class Player {
         wave.init();
         buttons=new ArrayList<>();
         menus=new Stack<>();
+        theMenu=new Menu();
         float l=topRect.width()*0.3f;
         RectF r=new RectF(0,0,l,topRect.height()*0.8f);
         buttons.add(new InfoButton(r));

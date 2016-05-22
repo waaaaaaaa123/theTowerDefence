@@ -183,9 +183,14 @@ public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
     public boolean onSingleTapUp(MotionEvent e) {
         Log.i("onSingleTapUp","8");
         float x=e.getX(0),y=e.getY(0);
-        if(!Player.getMenus().empty()){
+        /*if(!Player.getMenus().empty()){
             Menu menu=Player.getMenus().peek();
             menu.onClick(e);
+            return true;
+        }*/
+
+        if(Player.menu){
+            Player.theMenu.onClick(e);
             return true;
         }
 

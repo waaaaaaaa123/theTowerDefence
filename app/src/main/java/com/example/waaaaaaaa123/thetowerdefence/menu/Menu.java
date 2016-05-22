@@ -47,6 +47,7 @@ public class Menu {
         for (Button button : buttons) {
             if (button.getRect().contains(e.getX(0),e.getY(0))){
                 button.onClick();
+                Player.menu=false;
                 return;
             }
         }
@@ -58,6 +59,7 @@ public class Menu {
     public void onNotClick(MotionEvent e) {
         Player.setState(state);
         if(state!=Player.STATE_FAIL)
-            Player.getMenus().pop();
+            Player.menu=false;
+            //Player.getMenus().pop();
     }
 }

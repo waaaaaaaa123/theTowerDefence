@@ -16,7 +16,6 @@ public class MenuButton extends Button {
 
     @Override
     public void onClick() {
-        if(Player.getMenus().empty())
-            Player.getMenus().push(new Menu());
+        Player.menu=true;
     }
 }
