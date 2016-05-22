@@ -28,9 +28,9 @@ public class Grid implements Iterable<Block>{
     private static float length;
     private RectF rect;
     protected int xSize,ySize;
-    public Grid(RectF rect,int xSize,int ySize){
-        this.xSize=xSize;
-        this.ySize=ySize;
+    public Grid(RectF rect){
+        xSize=12;
+        ySize=xSize;
         this.rect=rect;
         blocks=new ArrayList<Block>();
         start=new Point();
@@ -48,7 +48,9 @@ public class Grid implements Iterable<Block>{
             }
             top+=length;
         }
-
+        setBlockIdByCount(1, 1, Block.START);
+        setBlockIdByCount(10, 10, Block.END);
+        setPath();
     }
 
     public void update(long dt){
@@ -178,14 +180,6 @@ public class Grid implements Iterable<Block>{
         public void recycle(Point start,Point end,int bound){
 
         }
-       /* public ArrayList<PointF> getPath(){
-            if(from[end.y][end.x]==null)return null;
-            ArrayList<PointF> path= new ArrayList<>(m[end.y][end.x] + 1);
-            for(Point c=end;c!=null;c=from[c.y][c.x]){
-                path.add(0, getBlockByCount(c.x, c.y).getCenter());
-            }
-            return path;
-        }*/
         public ArrayList<Block> getPath(){
             if(from[end.y][end.x]==null)return null;
             ArrayList<Block> p= new ArrayList<>(m[end.y][end.x] + 1);

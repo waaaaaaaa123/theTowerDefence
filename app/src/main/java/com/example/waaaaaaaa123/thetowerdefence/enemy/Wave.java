@@ -26,7 +26,6 @@ public class Wave implements Iterable<Enemy> {
         this.id=id;
         enemies=new ArrayList<Enemy>();
         path=new ArrayList<>();
-        Player.getGrid().setPath();
 
     }
 

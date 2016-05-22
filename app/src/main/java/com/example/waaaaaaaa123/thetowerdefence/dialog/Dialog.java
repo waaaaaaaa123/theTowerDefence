@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class Dialog {
     public static final int DIALOG_BASE=0;
     public static final int DIALOG_ITEM=1;
+    public static final int DIALOG_INFO=2;
     private int id;
     protected RectF rect;
     private ArrayList<String> text;

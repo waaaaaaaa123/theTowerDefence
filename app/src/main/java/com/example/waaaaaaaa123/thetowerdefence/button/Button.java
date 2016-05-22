@@ -18,11 +18,13 @@ public class Button {
     public static final int BUTTON_BUY=2;
     public static final int BUTTON_LEARN=3;
     public static final int BUTTON_BOOK=4;
+    public static final int BUTTON_INFO=5;
     private int id;
     private RectF rect;
     protected String string;
     public Button(RectF rect){
-        this.rect=rect;
+        this.rect=new RectF(rect);
+        this.rect.inset(rect.width()*0.1f,rect.height()*0.1f);
         string="GO!";
         init();
     }
@@ -42,6 +44,10 @@ public class Button {
 
     public String getString() {
         return string;
+    }
+
+    public void setString(String string) {
+        this.string = string;
     }
 
     public void onClick(){

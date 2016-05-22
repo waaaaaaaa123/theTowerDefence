@@ -258,13 +258,10 @@ public abstract class Projectile implements Comparable<Projectile> {
             onImpetus(l);
         }
         l*=Grid.getLength();
-        /*l+=getRect().width()/2+target.getRect().width()/2;*/
 
         checkTargetPoint();
         float dl=aim(targetPoint);
         rect.offset(l*forward.x,l*forward.y);
-        /*point.x+=l*forward.x;
-        point.y+=l*forward.y;*/
         if(target!=null&&target.getState()==Enemy.STATE_ALIVE) {
             if(isInRange(target))
                 onHit();
@@ -272,16 +269,6 @@ public abstract class Projectile implements Comparable<Projectile> {
         else
         if(l>=dl)
             onHit();
-        /*degree+=0.3*l*360/(2*Math.PI*10);
-        if(degree>360) degree-=360;*/
-
-        /*if (isHit(l,targetPoint)){
-            onHit();
-        }
-        else{
-            point.x+=l*forward.x;
-            point.y+=l*forward.y;
-        }*/
 
     }
     public void update(long dt){

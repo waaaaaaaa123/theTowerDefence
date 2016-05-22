@@ -107,6 +107,7 @@ public class DrawableManager {
         towerPaints.put(Tower.TOWER_BURN,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_burn));
         towerPaints.put(Tower.TOWER_COMBO,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_combo));
         towerPaints.put(Tower.TOWER_ORB,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_orb));
+        towerPaints.put(Tower.TOWER_RANDOM,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_orb));
 
         abilityIconPaints.put(TowerAbility.ABILITY_TOWER_ARMORREDUCE,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_armor_reduce));
         abilityIconPaints.put(TowerAbility.ABILITY_TOWER_CRITICALSTRIKE,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_critical_strike));
@@ -200,6 +201,7 @@ public class DrawableManager {
         drawPlayer(canvas);
         drawFocusItem(canvas);
         drawMenu(canvas);
+        if(Player.info)drawInfo(canvas);
     }
     public void drawMenu(Canvas canvas){
         if(!Player.getMenus().empty()){
@@ -225,6 +227,18 @@ public class DrawableManager {
     }
     public void drawBackground(Canvas canvas){
         canvas.drawColor(Color.WHITE);
+        Paint paint=new Paint();
+        float l=ItemSlot.getLength()*0.05f;
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.BLACK);
+        paint.setStrokeWidth(l);
+        RectF rect=new RectF(Player.mainRect);
+        rect.inset(-l,-l);
+        canvas.drawRect(rect, paint);
+
+        rect.set(Player.bottomRect);
+        rect.inset(-l, -l);
+        canvas.drawRect(rect,paint);
         /*player.animator.draw(canvas);
         canvas.drawColor(Color.WHITE & 0xC0FFFFFF);*/
 
@@ -255,11 +269,17 @@ public class DrawableManager {
     }
     public void drawGold(Canvas canvas){
         Paint paint=new Paint();
+        String s=Player.getBag().getGold()+"";
+        RectF rect=new RectF();
+        rect.offset(Player.mainRect.centerX(), (Player.bottomRect.top + Player.mainRect.bottom) / 2);
+        float l=(Player.bottomRect.top-Player.mainRect.bottom)*0.8f;
+        rect.inset(-l*0.5f*s.length()*0.6f,-l*0.5f);
+        paint.setColor(Color.YELLOW);
+        canvas.drawRect(rect, paint);
+        paint.setTextSize(l);
         paint.setColor(Color.BLACK);
         paint.setTextAlign(Paint.Align.CENTER);
-        float l=Player.bottomRect.top-Player.mainRect.bottom;
-        paint.setTextSize(l);
-        canvas.drawText(Player.getBag().getGold()+"",Player.getMainRect().centerX(),Player.bottomRect.top,paint);
+        canvas.drawText(s,rect.centerX(),rect.bottom - paint.getTextSize() * 0.2f,paint);
     }
     public void drawPlayer(Canvas canvas){
         Paint paint=new Paint();
@@ -272,20 +292,25 @@ public class DrawableManager {
         drawHpBar(canvas);
         //drawGold(canvas);
         paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(30);
+        paint.setTextSize(ItemSlot.getLength()*0.3f);
         for (Button button : Player.getButtons()) {
             switch (button.getId()){
                 case Button.BUTTON_BASE:
                     paint.setColor(Color.BLACK);
+                    paint.setStyle(Paint.Style.STROKE);
+                    paint.setStrokeWidth(ItemSlot.getLength() * 0.05f);
                     canvas.drawRect(button.getRect(), paint);
-                    paint.setColor(Color.WHITE);
-                    canvas.drawText(button.getString(),button.getRect().centerX(),button.getRect().bottom-5,paint);
+                    //paint.setColor(Color.WHITE);
+                    paint.setStyle(Paint.Style.FILL);
+                    canvas.drawText(button.getString(),button.getRect().centerX(),button.getRect().bottom-paint.getTextSize()*0.3f,paint);
                     break;
             }
         }
         if(!Player.getDialogs().isEmpty()){
             for(Dialog dialog:Player.getDialogs()){
-                paint.setColor(Color.BLACK);
+                if(dialog.getId()==Dialog.DIALOG_INFO)
+                    drawInfo(canvas);
+                /*paint.setColor(Color.BLACK);
                 paint.setAlpha(128);
                 canvas.drawRect(dialog.getRect(), paint);
                 paint.setColor(Color.WHITE);
@@ -294,7 +319,7 @@ public class DrawableManager {
 
                 for (int i = 0; i <dialog.getText().size() ; i++) {
                     canvas.drawText(dialog.getText().get(i),dialog.getRect().centerX(), dialog.getRect().top+f*(i+1), paint);
-                }
+                }*/
 
 
 
@@ -471,6 +496,12 @@ public class DrawableManager {
 
         canvas.save();
         canvas.rotate(-90, towerIcon.centerX(), towerIcon.centerY());
+        if(tower.getId()==Tower.TOWER_ORB){
+            bitmap=orbPaints.get(tower.getMainOrb());
+            rect.set(tower.getRect());
+            rect.inset(tower.getRect().width()*0.2f,tower.getRect().height()*0.2f);
+            canvas.drawBitmap(bitmap,null,rect,null);
+        }
         canvas.drawBitmap(bitmap, null, rect, null);
         canvas.restore();
 
@@ -509,7 +540,7 @@ public class DrawableManager {
         rect.set(0,0,l,l);
         rect.offsetTo(towerUI.getRect().left + towerUI.getRect().width() / 3, towerUI.getRect().top+towerUI.getRect().height()/2);
 
-        for (int i=0;i<4;i++) {
+        for (int i=0;i<tower.getLevel();i++) {
             canvas.drawRect(rect,paint);
             if(i<tower.getAbilities().size()){
                 TowerAbility towerAbility=tower.getAbilities().get(i);
@@ -549,8 +580,12 @@ public class DrawableManager {
                         else
                             paint.setColor(Color.RED);
                         paint.setAlpha(64);
-                        if(item.getRange()>0)
-                            canvas.drawCircle(rect.centerX(),rect.centerY(),item.getRange(),paint);
+                        if(item.getRange()>0){
+                            canvas.save();
+                            canvas.clipRect(Player.mainRect);
+                            canvas.drawCircle(rect.centerX(), rect.centerY(), item.getRange(), paint);
+                            canvas.restore();
+                        }
                         else
                         {
                             canvas.drawRect(grid.getRect().left,rect.top,grid.getRect().right,rect.bottom,paint);
@@ -653,6 +688,7 @@ public class DrawableManager {
     }
     public void drawBlock(Canvas canvas){
         Bitmap bitmap;
+        RectF rect=new RectF();
         Paint paint=new Paint();
         for(Block block:grid){
             bitmap=blockPaints.get(block.getId());
@@ -674,6 +710,21 @@ public class DrawableManager {
             y=(checks.get(i).y+0.85f)*Grid.getLength()+Player.getMainRect().top;
             canvas.drawText(i+1+"",x,y,paint);
         }
+
+        float l;
+        paint.setColor(Color.MAGENTA);
+        paint.setAlpha(64);
+        for (Block block : grid.getPath()) {
+            if(block.getId()==Block.BASE){
+                rect.set(block.getRect());
+                l=Grid.getLength()*0.2f;
+                //l*=Player.getRandomSeed().nextFloat()+0.5f;
+                rect.inset(l, l);
+                canvas.drawCircle(block.getRect().centerX(),block.getRect().centerY(),l,paint);
+                //canvas.drawRect(rect, paint);
+            }
+
+        }
     }
     public void drawEnemy(Canvas canvas){
         Bitmap bitmap;
@@ -692,17 +743,35 @@ public class DrawableManager {
                 bitmap=enemyPaints.get(enemy.getId());
                 if(bitmap!=null){
                     rect.set(enemy.getRect());
-                    canvas.drawBitmap(bitmap, null, enemy.getRect(), null);
-
                     paint.setColor(Color.BLACK);
                     paint.setStyle(Paint.Style.STROKE);
                     paint.setStrokeWidth(l * 0.5f);
+                    canvas.drawRect(rect, paint);
+                    rect.inset(l * 0.1f, l * 0.1f);
+                    paint.setStyle(Paint.Style.FILL);
+
+                    switch (enemy.getStatus()){
+                        case Enemy.STATUS_ATTACKLANDED:
+                            paint.setColor(Color.RED);
+                            canvas.drawRect(rect,paint);
+                            break;
+                        case Enemy.STATUS_DODGE:
+                            paint.setColor(Color.WHITE);
+                            canvas.drawRect(rect,paint);
+                            break;
+                        default:canvas.drawBitmap(bitmap, null, enemy.getRect(), null);
+                    }
+
+
 
                     /*rect.inset((rect.width() - l) / 2, (rect.width() - l) / 2);
                     rect.offsetTo(enemy.getRect().left, enemy.getRect().top - l * 2.75f);
                     canvas.drawRect(rect, paint);
                     bitmap=orbPaints.get(enemy.getMainOrb());
                     canvas.drawBitmap(bitmap, null, rect, null);*/
+                    rect.set(enemy.getRect());
+                    paint.setColor(Color.BLACK);
+                    paint.setStyle(Paint.Style.STROKE);
 
                     rect.set(enemy.getRect().left, enemy.getRect().top - l * 1.75f, enemy.getRect().right, enemy.getRect().top-l*0.75f);
                     canvas.drawRect(rect, paint);
@@ -735,22 +804,6 @@ public class DrawableManager {
                     canvas.drawBitmap(bitmap,null,rect,null);
                 }
 
-                /*float c= (float) Math.cos(Math.toRadians(tower.getDegree()));
-                int n=tower.getOrbs().size()+1;
-                for (int i = 0; i < n; i++) {
-                    rect.set(tower.getBlock().getRect());
-                    rect.inset(rect.width() * 0.4f, rect.height() * 0.4f);
-                    float w=Math.min(rect.width(),tower.getRect().width()*0.2f);
-                    float h=Math.max(rect.height(),tower.getRect().height()*0.2f);
-                    rect.inset(rect.width()-w,rect.height()-h);
-                    rect.offset(tower.getRect().centerX()-rect.centerX(),tower.getRect().centerY()-rect.centerY());
-                    float l=(n-1)/2.0f*(rect.height()+rect.height()*0.2f)-i*(rect.height()+rect.height()*0.2f);
-                    rect.offset(c * l, 0);
-
-
-                    bitmap=i>0?orbPaints.get(tower.getOrbs().get(i-1)):orbPaints.get(tower.getMainOrb());
-                    canvas.drawBitmap(bitmap,null,rect,null);
-                }*/
                 canvas.restore();
             }
         }
@@ -760,8 +813,10 @@ public class DrawableManager {
             Paint p=new Paint();
             p.setColor(Color.GREEN);
             p.setAlpha(64);
+            canvas.save();
+            canvas.clipRect(Player.mainRect);
             canvas.drawCircle(focusTower.getBlock().getRect().centerX(), focusTower.getBlock().getRect().centerY(), focusTower.getRange() * Grid.getLength(), p);
-
+            canvas.restore();
             bitmap=towerPaints.get(focusTower.getId());
 
 
@@ -774,22 +829,6 @@ public class DrawableManager {
                 rect.inset(focusTower.getRect().width()*0.2f,focusTower.getRect().height()*0.2f);
                 canvas.drawBitmap(bitmap,null,rect,null);
             }
-            /*float c= (float) Math.cos(Math.toRadians(focusTower.getDegree()));
-            int n=focusTower.getOrbs().size()+1;
-            for (int i = 0; i < n; i++) {
-                rect.set(focusTower.getBlock().getRect());
-                rect.inset(rect.width() * 0.4f, rect.height() * 0.4f);
-                float w=Math.min(rect.width(),focusTower.getRect().width()*0.2f);
-                float h=Math.max(rect.height(),focusTower.getRect().height()*0.2f);
-                rect.inset(rect.width()-w,rect.height()-h);
-                rect.offset(focusTower.getRect().centerX()-rect.centerX(),focusTower.getRect().centerY()-rect.centerY());
-
-                float l=(n-1)/2.0f*(rect.height()+rect.height()*0.2f)-i*(rect.height()+rect.height()*0.2f);
-                rect.offset(c * l, 0);
-
-                bitmap=i>0?orbPaints.get(focusTower.getOrbs().get(i-1)):orbPaints.get(focusTower.getMainOrb());
-                canvas.drawBitmap(bitmap,null,rect,null);
-            }*/
             canvas.restore();
         }
     }
@@ -812,6 +851,51 @@ public class DrawableManager {
 
                 projectile.getAnimator().draw(canvas);
             }
+        }
+    }
+
+    public void drawInfo(Canvas canvas){
+
+        float l=Player.mainRect.width();
+        Bitmap bitmap;
+        Paint paint=new Paint();
+        RectF rect=new RectF(-l/2,-l/2,l/2,l/2);
+        rect.inset(l * 0.1f, -l * 0.1f);
+        rect.offset(Player.mainRect.centerX(), Player.mainRect.centerY());
+
+        paint.setColor(Color.BLACK);
+        paint.setAlpha(128);
+        canvas.drawRect(rect, paint);
+
+        l=ItemSlot.getLength()*0.3f;
+        float left=rect.left+l,top=rect.top+l,mid=rect.centerX();
+        rect.set(left,top,left+l,top+l);
+
+        for (int[] t : Orb.tower) {
+            for (int i = 0; i < 3; i++) {
+                bitmap=orbPaints.get(t[i]);
+                canvas.drawBitmap(bitmap,null,rect,null);
+                rect.offset(l*1.2f,0);
+            }
+            rect.offset(l*0.2f,0);
+            bitmap=towerPaints.get(t[3]);
+            canvas.drawBitmap(bitmap,null,rect,null);
+            rect.offsetTo(left,rect.bottom+l*0.4f);
+        }
+
+        left=mid;
+        rect.offsetTo(left,top);
+
+        for (int[] a : Orb.ability) {
+            for (int i = 0; i < 4; i++) {
+                bitmap=orbPaints.get(a[i]);
+                canvas.drawBitmap(bitmap,null,rect, null);
+                rect.offset(l*1.2f,0);
+            }
+            rect.offset(l*0.2f,0);
+            bitmap=abilityIconPaints.get(a[4]);
+            canvas.drawBitmap(bitmap,null,rect,null);
+            rect.offsetTo(left,rect.bottom+l*0.4f);
         }
     }
 }

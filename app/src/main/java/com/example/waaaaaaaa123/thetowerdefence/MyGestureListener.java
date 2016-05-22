@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 
 import com.example.waaaaaaaa123.thetowerdefence.ability.AbilityBook;
 import com.example.waaaaaaaa123.thetowerdefence.ability.AbilitySlot;
+import com.example.waaaaaaaa123.thetowerdefence.block.Block;
 import com.example.waaaaaaaa123.thetowerdefence.block.Grid;
 import com.example.waaaaaaaa123.thetowerdefence.button.BookButton;
 import com.example.waaaaaaaa123.thetowerdefence.button.Button;
@@ -65,9 +66,15 @@ public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
 
     public void onUp(MotionEvent event) {
         Log.i("onUp",event.getX(0)+" "+event.getY(0));
+        float x=event.getX(0),y=event.getY(0);
+
 
         if(focusSlot!=null&&focusSlot.getItem()!=null){
+            if(!Player.getTowerUI().getRect().contains(x,y))
+                Player.getTowerUI().setShow(false);
+
             Item focusItem=focusSlot.getItem();
+            focusItem.setUsable();
             if(focusItem.isUsable()){
                 //focusItem.setState(Item.STATE_USE);
                 focusItem.use();
@@ -92,8 +99,18 @@ public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
     public boolean onEvent(MotionEvent e){
         event=e;
         float x=e.getX(0),y=e.getY(0);
-        if(Player.mainRect.contains(x,y))
-            Player.getGrid().onFocus(x,y);
+
+        if(Player.mainRect.contains(x,y)){
+            Player.getGrid().onFocus(x, y);
+            if(!Player.getTowerUI().getRect().contains(x,y))
+                Player.getTowerUI().setShow(false);
+            for (Tower tower : towerManager) {
+                if(tower.getRect().contains(x,y)){
+                    tower.onFocus();
+                    break;
+                }
+            }
+        }
         if(e.getAction()==MotionEvent.ACTION_UP){
             onUp(e);
             return true;
@@ -212,6 +229,7 @@ public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
 */
         }
 
+        Player.info=false;
         for (Button button : Player.getButtons()) {
             if (button.getRect().contains(e.getX(0),e.getY(0)))
                 button.onClick();
@@ -240,8 +258,8 @@ public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
     @Override
     public void onShowPress(MotionEvent e) {
         Log.i("onShowPress", e.getX(0) + " " + e.getY(0));
-        if(focusSlot!=null)
-            focusSlot.onHold();
+        /*if(focusSlot!=null)
+            focusSlot.onHold();*/
 
         super.onShowPress(e);
     }

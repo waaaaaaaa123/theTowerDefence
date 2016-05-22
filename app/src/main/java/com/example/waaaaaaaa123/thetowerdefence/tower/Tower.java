@@ -54,6 +54,7 @@ public class Tower {
     public static final int TOWER_RIFLE=9;
     public static final int TOWER_ROTATE=10;
     public static final int TOWER_COMBO=11;
+    public static final int TOWER_RANDOM=12;
 
     private int id;
     private int projectileId;
@@ -357,27 +358,6 @@ public class Tower {
             ability.cast(TowerAbility.STATE_ATTACK);
         }
         projectile=null;
-        /*for (TowerAbility towerAbility : abilities) {
-            switch (towerAbility.getId()){
-                case TowerAbility.ABILITY_TOWER_CRITICALSTRIKE:
-                    if(Player.getRandomSeed().nextFloat()<0.25f){
-                        damage*=2;
-                    }
-                    break;
-                case TowerAbility.ABILITY_TOWER_SLOWDOWN:p.addModifier(EnemyModifier.MODIFIER_SLOWDOWN);break;
-                case TowerAbility.ABILITY_TOWER_ARMORREDUCE:p.addModifier(EnemyModifier.MODIFIER_ARMORREDUCE);break;
-                case TowerAbility.ABILITY_TOWER_STUN:
-                    if(Player.getRandomSeed().nextFloat()<0.25f){
-                        p.addModifier(EnemyModifier.MODIFIER_STUN);
-                    }
-                    break;
-                case TowerAbility.ABILITY_TOWER_POISON:p.addModifier(EnemyModifier.MODIFIER_POISON);break;
-                case TowerAbility.ABILITY_TOWER_IMPETUS:p.addImpetus();break;
-
-            }
-        }
-
-        p.setDamage(damage);*/
         return p;
     }
 
@@ -511,21 +491,17 @@ public class Tower {
         if(level>0)
             orbs.add(mainOrb);
         Collections.sort(orbs);
-        int s=0;
+        //int s=0;
         for (int i = 0; i < orbs.size(); i++) {
             Log.i("lvl "+level+" orbs",orbs.get(i)+" ");
             //s+=Math.pow(8,orbs.size()-i-1)*orbs.get(i);
-            s=16*s+orbs.get(i);
+            //s=16*s+orbs.get(i);
             c[orbs.get(i)]++;
             switch (orbs.get(i)){
                 case Orb.ORB_RED:onRedOrb();break;
                 case Orb.ORB_GREEN:onGreenOrb();break;
                 case Orb.ORB_YELLOW:onYellowOrb();break;
             }
-        }
-        Log.i("sss",s+"");
-        for (int i : c) {
-            Log.i("ccc",i+"");
         }
         for (int i = 0; i < c.length; i++) {
             if(c[i]>c[mainOrb]){
@@ -534,10 +510,10 @@ public class Tower {
             }
         }
         switch (level){
-            case 0:onLevel0(s);break;
+            case 0:onLevel0(mainOrb);break;
             case 1:break;
-            case 2:onLevel2(s);break;
-            case 3:onLevel3(s);break;
+            case 2:onLevel2(Orb.levelUp(orbs));break;
+            case 3:onLevel3(Orb.levelUp(orbs));break;
         }
 
         level++;
@@ -563,24 +539,25 @@ public class Tower {
 
 
         switch (s){//0-red,1-green,2-yellow
-            case 0x000:id=TOWER_AXE;projectileId=Projectile.PROJECTILE_AXE;break;
-            case 0x001:id=TOWER_CHAIN;projectileId=Projectile.PROJECTILE_CHAIN;break;
-            case 0x002:id=TOWER_BOMB;projectileId=Projectile.PROJECTILE_BOMB;break;
+            case TOWER_AXE:id=TOWER_AXE;projectileId=Projectile.PROJECTILE_AXE;break;
+            case TOWER_CHAIN:id=TOWER_CHAIN;projectileId=Projectile.PROJECTILE_CHAIN;break;
+            case TOWER_BOMB:id=TOWER_BOMB;projectileId=Projectile.PROJECTILE_BOMB;break;
 
-            case 0x111:id=TOWER_WHIP;projectileId=Projectile.PROJECTILE_WHIP;break;
-            case 0x011:id=TOWER_RIFLE;projectileId= Projectile.PROJECTILE_RIFLE;projectileNum+=2;break;
-            case 0x112:id=TOWER_CONE;projectileId=Projectile.PROJECTILE_CONE;break;
+            case TOWER_WHIP:id=TOWER_WHIP;projectileId=Projectile.PROJECTILE_WHIP;break;
+            case TOWER_RIFLE:id=TOWER_RIFLE;projectileId= Projectile.PROJECTILE_RIFLE;projectileNum+=2;break;
+            case TOWER_CONE:id=TOWER_CONE;projectileId=Projectile.PROJECTILE_CONE;break;
 
-            case 0x222:id=TOWER_SWORD;projectileId=Projectile.PROJECTILE_SWORD;break;
-            case 0x022:id=TOWER_COMBO;projectileId=Projectile.PROJECTILE_COMBO;comboNum+=2;break;
-            case 0x122:id=TOWER_SPLIT;projectileId=Projectile.PROJECTILE_SPLIT;enemyNum+=2;break;
+            case TOWER_SWORD:id=TOWER_SWORD;projectileId=Projectile.PROJECTILE_SWORD;break;
+            case TOWER_COMBO:id=TOWER_COMBO;projectileId=Projectile.PROJECTILE_COMBO;comboNum+=2;break;
+            case TOWER_SPLIT:id=TOWER_SPLIT;projectileId=Projectile.PROJECTILE_SPLIT;enemyNum+=2;break;
 
-            case 0x012:id=Player.getRandomSeed().nextInt(11)+1;projectileId=Player.getRandomSeed().nextInt(11)+1;break;//a random tower
+            case TOWER_RANDOM:id=Player.getRandomSeed().nextInt(11)+1;projectileId=Player.getRandomSeed().nextInt(11)+1;break;//a random tower
         }
 
     }
     private void onLevel3(int s){
-        TowerAbility ability=null;
+        addAbility(s);
+        /*TowerAbility ability=TowerAbility.create(s,this);
         switch (s){
             case 0x0000:ability=new TowerAbilityArmorReduce(this);break;
             case 0x0001:ability=new TowerAbilityPoison(this);break;
@@ -606,7 +583,7 @@ public class Tower {
         if(ability!=null){
             abilities.add(ability);
             ability.cast(TowerAbility.STATE_LEARNED);
-        }
+        }*/
     }
     public void addAbility(int aId){
         TowerAbility ability= TowerAbility.create(aId,this);

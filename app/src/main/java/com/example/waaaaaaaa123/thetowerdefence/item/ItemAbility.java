@@ -17,7 +17,7 @@ public abstract class ItemAbility extends Item {
         if(usable){
             usable=false;
             Tower tower= Player.getTowerManager().getTower(block);
-            if(tower!=null&&tower.getAbilities().size()<4){
+            if(tower!=null&&tower.getAbilities().size()<tower.getLevel()){
                 usable=true;
             }
 

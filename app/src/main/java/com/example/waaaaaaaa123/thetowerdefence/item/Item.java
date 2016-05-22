@@ -199,31 +199,7 @@ public abstract class Item {
             showRange=false;
         }
     }
-    /*public final void onFocus(float x, float y){
-        float l=Grid.getLength();
-        switch (state){
-            case STATE_INSLOT:
-                state= STATE_ONFOCUS;
-                break;
-            case STATE_ONFOCUS:
-                block=Player.getGrid().getBlock(x, y);
-                if(block==null)
-                {
-                    rect.set(x-l/2,y-l/2,x+l/2,y+l/2);
-                    usable =false;
-                    showRange=false;
-                }
-                else
-                {
-                    rect.set(block.getRect());
-                    setUsable();
-                    showRange=true;
-                }
-                break;
 
-        }
-
-    }*/
     public void use(){
         //slot.stackDown();
         //setState(STATE_INSLOT);
@@ -240,10 +216,10 @@ public abstract class Item {
     }
     public void setUsable() {
 
-        if (bag)usable=num>0;
-        if (shop)usable=Player.getBag().getGold()>=cost;
+        usable=block!=null;
+        if (bag)usable&=num>0;
+        if (shop)usable&=Player.getBag().getGold()>=cost;
 
-        usable&=block!=null;
 
 
         //usable = block.getId() == Block.BUILD;

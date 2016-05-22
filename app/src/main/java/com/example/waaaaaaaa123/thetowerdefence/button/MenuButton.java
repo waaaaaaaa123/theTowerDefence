@@ -11,7 +11,7 @@ import com.example.waaaaaaaa123.thetowerdefence.menu.Menu;
 public class MenuButton extends Button {
     public MenuButton(RectF rect) {
         super(rect);
-        string="M";
+        string="Menu";
     }
 
     @Override

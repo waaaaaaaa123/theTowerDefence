@@ -7,6 +7,7 @@ import com.example.waaaaaaaa123.thetowerdefence.ability.AbilityBook;
 import com.example.waaaaaaaa123.thetowerdefence.block.Block;
 import com.example.waaaaaaaa123.thetowerdefence.block.Grid;
 import com.example.waaaaaaaa123.thetowerdefence.button.Button;
+import com.example.waaaaaaaa123.thetowerdefence.button.InfoButton;
 import com.example.waaaaaaaa123.thetowerdefence.button.MenuButton;
 import com.example.waaaaaaaa123.thetowerdefence.dialog.Dialog;
 import com.example.waaaaaaaa123.thetowerdefence.enemy.Enemy;
@@ -38,6 +39,8 @@ public class Player {
 
     public static RectF rect,topRect,mainRect,bottomRect;
 
+    public static boolean info=false;
+
     //private Button playButton;
     private static ArrayList<Button> buttons;
     private static Stack<Dialog> dialogs;
@@ -60,6 +63,7 @@ public class Player {
         mainRect=new RectF(rect.left,topRect.bottom,rect.right,topRect.bottom+rect.width());
         bottomRect=new RectF(rect.left,mainRect.bottom,rect.right,rect.bottom);
         mainRect.inset(mainRect.width()*0.1f,mainRect.height()*0.1f);
+        //topRect.bottom-=l*0.3f;
         //animator=new Animator(mainRect,0f);
         init();
 
@@ -70,9 +74,8 @@ public class Player {
 
         randomSeed=new Random();
 
-        grid=new Grid(mainRect,12,12);
-        grid.setBlockIdByCount(1, 1, Block.START);
-        grid.setBlockIdByCount(10, 10, Block.END);
+        grid=new Grid(mainRect);
+
         bag=new Bag();
         towerUI=new TowerUI();
         abilityBook=new AbilityBook();
@@ -87,16 +90,21 @@ public class Player {
 
 
             bag.addItem(Item.ITEM_BUILDBLOCK,10);
-            bag.addItem(Item.ITEM_BOMBTOWER,10);
-            bag.addItem(Item.ITEM_ABILITY_STATUSUP,10);
-            bag.addItem(Item.ITEM_CHECKBLOCK,10);
+            bag.addItem(Item.ITEM_BOMBTOWER, 10);
+            bag.addItem(Item.ITEM_ABILITY_STATUSUP, 10);
+            bag.addItem(Item.ITEM_CHECKBLOCK, 10);
 
 
         wave.init();
         buttons=new ArrayList<>();
         menus=new Stack<>();
-        buttons.add(new MenuButton(new RectF(Player.getTopRect().right-50,Player.getTopRect().top,Player.getTopRect().right,Player.getTopRect().top+50)));
-        buttons.add(new Button(new RectF(Player.getTopRect().centerX()-50,Player.getTopRect().centerY()-30,Player.getTopRect().centerX()+50,Player.getTopRect().centerY()+30)));
+        float l=topRect.width()*0.3f;
+        RectF r=new RectF(0,0,l,topRect.height()*0.8f);
+        buttons.add(new InfoButton(r));
+        r.offset(topRect.centerX()-r.centerX(),0);
+        buttons.add(new Button(r));
+        r.offset(topRect.right-r.right,0);
+        buttons.add(new MenuButton(r));
         dialogs=new Stack<>();
 
         hp=100;
@@ -139,6 +147,7 @@ public class Player {
 
     public static void addHp(int add){
         hp+=add;
+        if(hp>100)hp=100;
         if(hp<=0&&state!=STATE_FAIL){
             hp=0;
             state=STATE_FAIL;

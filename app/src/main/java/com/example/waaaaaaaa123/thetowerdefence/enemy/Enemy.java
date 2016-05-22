@@ -293,15 +293,15 @@ public class Enemy implements Comparable<Enemy>{
         for (EnemyModifier enemyModifier : enemyModifiers) {
             if (enemyModifier.isAlive()){
                 enemyModifier.update(dt);
+                if(stun){
+                    status=STATUS_STUN;
+                    stun=false;
+                    return;
+                }
             }
         }
         for (EnemyAbility ability : abilities) {
             ability.update(dt);
-        }
-        if(stun){
-            status=STATUS_STUN;
-            stun=false;
-            return;
         }
         for (EnemyAbility ability : abilities) {
             ability.cast(EnemyAbility.STATE_READY);
@@ -323,6 +323,10 @@ public class Enemy implements Comparable<Enemy>{
 
     public int getDp() {
         return dp;
+    }
+
+    public int getStatus() {
+        return status;
     }
 
     public float getHp() {
@@ -395,7 +399,7 @@ public class Enemy implements Comparable<Enemy>{
 
     }
     public void calDamage(int orb,float damage,Tower caster){
-        damage*=Orb.calD(orb,mainOrb);
+        damage*=Orb.damage(orb, mainOrb);
         if(armor>=0){
             damage/=1+0.06*armor;
         }
