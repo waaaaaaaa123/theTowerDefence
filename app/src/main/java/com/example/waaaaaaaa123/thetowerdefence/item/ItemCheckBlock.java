@@ -28,6 +28,7 @@ public class ItemCheckBlock extends Item {
         block.setId(Block.CHECK);
         Player.getGrid().getChecks().add(Player.getGrid().getBlockCount(block));
         Player.getWave().setPath();
+        Player.getGrid().setPath();
         super.use();
     }
 }

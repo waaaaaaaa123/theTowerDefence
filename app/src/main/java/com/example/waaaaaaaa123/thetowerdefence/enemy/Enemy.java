@@ -293,15 +293,16 @@ public class Enemy implements Comparable<Enemy>{
         for (EnemyModifier enemyModifier : enemyModifiers) {
             if (enemyModifier.isAlive()){
                 enemyModifier.update(dt);
-                if(stun){
-                    status=STATUS_STUN;
-                    stun=false;
-                    return;
-                }
+
             }
         }
         for (EnemyAbility ability : abilities) {
             ability.update(dt);
+        }
+        if(stun){
+            status=STATUS_STUN;
+            stun=false;
+            return;
         }
         for (EnemyAbility ability : abilities) {
             ability.cast(EnemyAbility.STATE_READY);
