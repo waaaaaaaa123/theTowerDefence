@@ -54,13 +54,6 @@ public class Button {
         switch (Player.getState()) {
             case Player.STATE_PREPARE:
                 Player.getWave().nextWave();
-                /*for (int i = 0; i < 10; i++) {
-                    Enemy e=new Enemy();
-                    ArrayList<EnemyAbility> abilities=new ArrayList<>();
-                    abilities.add(new EnemyAbilityHeal(e));
-                    e.init(1,0,1,30,abilities);
-                    Player.getWave().addEnemy(e);
-                }*/
                 Player.setState(Player.STATE_DEFENCE);
                 break;
         }

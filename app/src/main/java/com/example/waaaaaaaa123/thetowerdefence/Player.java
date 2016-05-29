@@ -160,7 +160,7 @@ public class Player {
     }
 
     public static void setState(int state) {
-        if(state!=STATE_FAIL)
+        if(Player.state!=STATE_FAIL)
             Player.state = state;
     }
 
