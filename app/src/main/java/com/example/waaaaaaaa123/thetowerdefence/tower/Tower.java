@@ -76,11 +76,11 @@ public class Tower {
 
     public static final int TYPE_PHYSICAL=0;
     public static final int TYPE_MAGICAL=1;
-    protected float attackMin,attackMax;
     //protected float attackBonus=0;
     //protected float damage;
-    protected float range=2;
-    protected float speed=3;
+    protected float attackMin,attackMax;
+    protected float range;
+    protected float speed;
     private HashSet<Enemy> enemies;
     protected ArrayList<TowerAbility> abilities;
     protected ArrayList<TowerModifier> modifiers;
@@ -118,6 +118,8 @@ public class Tower {
             case Tower.TOWER_SPLIT:tower=new SplitTower(block);break;
         }
         block.setId(Block.TOWER);
+        if(id!=TOWER_ORB)//set level max
+            tower.level=LEVEL_MAX;
         return tower;
     }
     public Tower(Block block){
@@ -254,6 +256,10 @@ public class Tower {
 
     public float getProjectileSpeed() {
         return projectileSpeed;
+    }
+
+    public ArrayList<TowerModifier> getModifiers() {
+        return modifiers;
     }
 
     public Block getBlock() {
@@ -402,15 +408,20 @@ public class Tower {
             onBuilding(dt);
             return;
         }
+        for (TowerModifier modifier : modifiers) {
+            if(modifier.isAlive())
+                modifier.update(dt);
+        }
+        for (TowerAbility ability : abilities) {
+            ability.update(dt);
+        }
+
         findTarget();
         onAiming(dt);
         onLoading(dt);
         onFire(dt);
         afterAttack(dt);
 
-        for (TowerAbility ability : abilities) {
-            ability.update(dt);
-        }
 
     }
     protected void onBuilding(long dt){
@@ -624,8 +635,12 @@ public class Tower {
                 break;
             }
         }
-        if(towerModifier!=null)
-            towerModifier.recycle(this,stack);
+        if(towerModifier!=null){
+            if(towerModifier.isAlive())
+                towerModifier.stackUp(stack);
+            else
+                towerModifier.recycle(this, stack);
+        }
         else{
             switch (mId){
                 case TowerModifier.MODIFIER_TOWER_ATTACKUP:towerModifier=new TowerModifierAttackup(this,stack);break;

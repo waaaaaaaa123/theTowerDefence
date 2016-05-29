@@ -70,28 +70,24 @@ public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
 
 
         if(focusSlot!=null&&focusSlot.getItem()!=null){
-            if(!Player.getTowerUI().getRect().contains(x,y))
-                Player.getTowerUI().setShow(false);
+            Player.getTowerUI().setShow(false);
 
             Item focusItem=focusSlot.getItem();
-            focusItem.setUsable();
+            focusItem.onFocus(x, y);
+
             if(focusItem.isUsable()){
-                //focusItem.setState(Item.STATE_USE);
                 focusItem.use();
             }
-            else if(Player.getBag().getShopRect().contains(event.getX(0),event.getY(0))&&!focusItem.isShop())
+            else if(Player.getBag().getShopRect().contains(x,y)&&!focusItem.isShop())
                 focusItem.sell();
-            //focusItem.setState(Item.STATE_INSLOT);
 
             if(!focusItem.isShop()){
 
-                ItemSlot slot=bag.getSlot(event.getX(0),event.getY(0));
+                ItemSlot slot=bag.getSlot(x,y);
                 if(slot!=null&&slot.getType()==ItemSlot.TYPE_BAG)
                     focusSlot.swap(slot);
             }
 
-            /*focusItem =null;
-            Player.setFocusItem(focusItem);*/
             focusSlot=null;
         }
 
@@ -100,10 +96,11 @@ public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
         event=e;
         float x=e.getX(0),y=e.getY(0);
 
+        //if(!Player.getTowerUI().getRect().contains(x,y))
+            Player.getTowerUI().setShow(false);
         if(Player.mainRect.contains(x,y)){
             Player.getGrid().onFocus(x, y);
-            if(!Player.getTowerUI().getRect().contains(x,y))
-                Player.getTowerUI().setShow(false);
+
             for (Tower tower : towerManager) {
                 if(tower.getRect().contains(x,y)){
                     tower.onFocus();
@@ -150,6 +147,9 @@ public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
 
         /*if(Player.getAbilityBook().isOpen())
             return true;*/
+
+        if(Player.menu)
+            return true;
 
         float x=e.getX(0),y=e.getY(0);
         if(!Player.getTowerUI().getRect().contains(x,y))

@@ -19,7 +19,7 @@ public class ItemRedMushroom extends Item {
 
     @Override
     public void setUsable() {
-        usable =false;
+        super.setUsable();
         if(usable&&block.getId()==Block.TOWER&& Player.getTowerManager().getTower(block).hasModifier(mId)<=stack){
             usable =true;
         }
@@ -30,8 +30,6 @@ public class ItemRedMushroom extends Item {
     @Override
     public void use() {
         Player.getTowerManager().getTower(block).addModifier(mId,stack);
-        Player.getTowerManager().getTower(block).addAbility(TowerAbility.ABILITY_TOWER_MOREATTACK);
-        Player.getTowerManager().getTower(block).addAbility(TowerAbility.ABILITY_TOWER_MORESPEED);
         super.use();
     }
 }

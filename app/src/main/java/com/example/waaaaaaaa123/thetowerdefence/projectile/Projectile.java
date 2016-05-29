@@ -54,8 +54,8 @@ public abstract class Projectile implements Comparable<Projectile> {
     protected PointF targetPoint;
     private int impetus=0;
 
-    private float speed=5;
-    private float damage=10;
+    private float speed;
+    private float damage;
 
     private HashMap<Integer,Integer> modifiers;
     private Animator animator;

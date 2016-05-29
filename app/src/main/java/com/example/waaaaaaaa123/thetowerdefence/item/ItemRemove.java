@@ -29,7 +29,9 @@ public class ItemRemove extends Item {
     @Override
     public void use() {
         switch (block.getId()){
-            case Block.BUILD:block.setId(Block.BASE);break;
+            case Block.BUILD:
+                block.setId(Block.BASE);
+                break;
             case Block.TOWER:
                 block.setId(Block.TOWER);
                 Player.getTowerManager().removeTower(block);
@@ -38,6 +40,10 @@ public class ItemRemove extends Item {
                 block.setId(Block.BASE);
                 Player.getGrid().removeCheck(block);
                 break;
+        }
+        if(Player.getState()==Player.STATE_PREPARE){
+            Player.getGrid().setPath();
+            Player.getWave().setPath();
         }
         super.use();
     }

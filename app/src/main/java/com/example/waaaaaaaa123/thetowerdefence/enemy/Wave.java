@@ -69,8 +69,11 @@ public class Wave implements Iterable<Enemy> {
             }
         }
         if(dead==enemies.size()){
-            Reward reward=new Reward(id);
             Player.setState(Player.STATE_PREPARE);
+            Reward reward=new Reward(id);
+            enemies.clear();
+            Player.getGrid().setPath();
+            setPath();
             //Player.getDialogs().add(new Dialog());
         }
         Collections.sort(enemies);

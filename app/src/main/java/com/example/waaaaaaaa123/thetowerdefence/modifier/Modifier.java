@@ -1,5 +1,7 @@
 package com.example.waaaaaaaa123.thetowerdefence.modifier;
 
+import android.util.Log;
+
 import com.example.waaaaaaaa123.thetowerdefence.enemy.Enemy;
 
 /**
@@ -11,12 +13,13 @@ public abstract class Modifier {
 
     protected boolean alive;
     protected float duration;
-    protected float restDuration;
+    //protected float restDuration;
+    protected long timer;
     protected int stack;
 
     protected void recycle(int stack){
         this.stack=stack;
-        restDuration=duration;
+        timer=0;
         alive=true;
         onStart();
     }
@@ -49,6 +52,9 @@ public abstract class Modifier {
     public float getDuration() {
         return duration;
     }
+    public float getPercent(){
+        return timer/(duration*1000);
+    }
 
     public void setDuration(float duration) {
         this.duration = duration;
@@ -58,7 +64,7 @@ public abstract class Modifier {
     public void stackUp(int s){
 
         if(s>=stack){
-            restDuration=duration;
+            timer=0;
             for(;stack<s;stack++){
                 onStack();
             }
@@ -71,9 +77,9 @@ public abstract class Modifier {
 
     }
     public void update(long dt){
-        restDuration-=dt/1000;
+        timer+=dt;
         onDuring(dt);
-        if(restDuration<=0){
+        if(timer>=duration*1000){
             onEnd();
         }
     }

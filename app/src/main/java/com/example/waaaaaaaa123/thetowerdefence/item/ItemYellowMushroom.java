@@ -19,8 +19,8 @@ public class ItemYellowMushroom extends Item {
 
     @Override
     public void setUsable() {
-
-        if(usable&&block.getId()==Block.TOWER&& Player.getTowerManager().getTower(block).hasModifier(mId)<=1){
+        super.setUsable();
+        if(usable&&block.getId()==Block.TOWER&& Player.getTowerManager().getTower(block).hasModifier(mId)<=stack){
             usable =true;
         }
         else

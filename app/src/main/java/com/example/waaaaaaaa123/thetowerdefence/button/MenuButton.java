@@ -17,5 +17,6 @@ public class MenuButton extends Button {
     @Override
     public void onClick() {
         Player.menu=true;
+        Player.theMenu.onPause();
     }
 }

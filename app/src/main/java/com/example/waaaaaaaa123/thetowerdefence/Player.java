@@ -90,10 +90,10 @@ public class Player {
 
 
 
-            bag.addItem(Item.ITEM_BUILDBLOCK,10);
-            bag.addItem(Item.ITEM_BOMBTOWER, 10);
-            bag.addItem(Item.ITEM_ABILITY_STATUSUP, 10);
-            bag.addItem(Item.ITEM_CHECKBLOCK, 10);
+            bag.addItem(Item.ITEM_BUILDBLOCK,5);
+            bag.addItem(Item.ITEM_REDMUSHROOM,5);
+            bag.addItem(Item.ITEM_ABILITY_STATUSUP, 3);
+            bag.addItem(Item.ITEM_CHECKBLOCK, 3);
 
 
         wave.init();
@@ -150,15 +150,18 @@ public class Player {
     public static void addHp(int add){
         hp+=add;
         if(hp>100)hp=100;
-        if(hp<=0&&state!=STATE_FAIL){
+        else if(hp<=0){
             hp=0;
             state=STATE_FAIL;
-            menus.push(new Menu());
+            menu=true;
+
+
         }
     }
 
     public static void setState(int state) {
-        Player.state = state;
+        if(state!=STATE_FAIL)
+            Player.state = state;
     }
 
     public static int getState() {

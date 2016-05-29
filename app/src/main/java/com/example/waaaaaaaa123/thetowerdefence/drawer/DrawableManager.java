@@ -28,6 +28,7 @@ import com.example.waaaaaaaa123.thetowerdefence.item.Bag;
 import com.example.waaaaaaaa123.thetowerdefence.item.Item;
 import com.example.waaaaaaaa123.thetowerdefence.item.ItemSlot;
 import com.example.waaaaaaaa123.thetowerdefence.menu.Menu;
+import com.example.waaaaaaaa123.thetowerdefence.modifier.TowerModifier;
 import com.example.waaaaaaaa123.thetowerdefence.orb.Orb;
 import com.example.waaaaaaaa123.thetowerdefence.projectile.Projectile;
 import com.example.waaaaaaaa123.thetowerdefence.projectile.ProjectileManager;
@@ -52,6 +53,7 @@ public class DrawableManager {
     private HashMap<Integer,Bitmap> towerPaints;
     private HashMap<Integer,Bitmap> orbPaints;
     private HashMap<Integer,Bitmap> abilityIconPaints;
+    private HashMap<Integer,Bitmap> towerModifierPaints;
     private ProjectileManager projectileManager;
     private HashMap<Integer,Bitmap> projectilePaints;
     private Bag bag;
@@ -66,12 +68,13 @@ public class DrawableManager {
         this.bag=player.getBag();
 
 
-        blockPaints=new HashMap<Integer,Bitmap>();
-        enemyPaints=new HashMap<Integer,Bitmap>();
-        towerPaints=new HashMap<Integer,Bitmap>();
+        blockPaints= new HashMap<>();
+        enemyPaints= new HashMap<>();
+        towerPaints= new HashMap<>();
+        towerModifierPaints=new HashMap<>();
         orbPaints=new HashMap<>();
         abilityIconPaints=new HashMap<>();
-        projectilePaints=new HashMap<Integer,Bitmap>();
+        projectilePaints= new HashMap<>();
         itemPaints=new HashMap<>();
         init();
     }
@@ -108,6 +111,10 @@ public class DrawableManager {
         towerPaints.put(Tower.TOWER_COMBO,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_combo));
         towerPaints.put(Tower.TOWER_ORB,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_orb));
         towerPaints.put(Tower.TOWER_RANDOM,BitmapFactory.decodeResource(context.getResources(), R.drawable.tower_orb));
+
+        towerModifierPaints.put(TowerModifier.MODIFIER_TOWER_ATTACKUP,BitmapFactory.decodeResource(context.getResources(),R.drawable.red_mushroom));
+        towerModifierPaints.put(TowerModifier.MODIFIER_TOWER_SPEEDUP,BitmapFactory.decodeResource(context.getResources(),R.drawable.green_mushroom));
+        towerModifierPaints.put(TowerModifier.MODIFIER_TOWER_RANGEUP,BitmapFactory.decodeResource(context.getResources(),R.drawable.yellow_mushroom));
 
         abilityIconPaints.put(TowerAbility.ABILITY_TOWER_ARMORREDUCE,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_armor_reduce));
         abilityIconPaints.put(TowerAbility.ABILITY_TOWER_CRITICALSTRIKE,BitmapFactory.decodeResource(context.getResources(), R.drawable.ability_critical_strike));
@@ -214,10 +221,11 @@ public class DrawableManager {
             paint.setAlpha(255);
             paint.setTextAlign(Paint.Align.CENTER);
             RectF rect=new RectF();
+            float l=ItemSlot.getLength();
             for (Button button : menu.getButtons()) {
                 paint.setColor(Color.WHITE);
                 rect.set(button.getRect());
-                rect.inset(5, 5);
+                rect.inset(l*0.05f,l*0.05f);
                 paint.setTextSize(rect.height()*0.75f);
                 canvas.drawRect(rect, paint);
                 paint.setColor(Color.BLACK);
@@ -233,12 +241,12 @@ public class DrawableManager {
         paint.setColor(Color.BLACK);
         paint.setStrokeWidth(l);
         RectF rect=new RectF(Player.mainRect);
-        rect.inset(-l,-l);
+        rect.inset(-l, -l);
         canvas.drawRect(rect, paint);
 
         rect.set(Player.bottomRect);
         rect.inset(-l, -l);
-        canvas.drawRect(rect,paint);
+        canvas.drawRect(rect, paint);
         /*player.animator.draw(canvas);
         canvas.drawColor(Color.WHITE & 0xC0FFFFFF);*/
 
@@ -534,6 +542,20 @@ public class DrawableManager {
 
             }
         }
+        rect.offsetTo(left + towerUI.getRect().width() / 3, top +v+ fontMetrics.descent+l*1.2f);
+        for (TowerModifier towerModifier : tower.getModifiers()) {
+            if(towerModifier.isAlive()){
+                bitmap=towerModifierPaints.get(towerModifier.getId());
+                canvas.drawBitmap(bitmap,null,rect,null);
+                canvas.save();
+                canvas.clipRect(rect);
+                rect.inset(-l,-l);
+                canvas.drawArc(rect,-90,towerModifier.getPercent()*360,true,paint);
+                rect.inset(l,l);
+                canvas.restore();
+                rect.offset(l*1.2f,0);
+            }
+        }
 
         l=ItemSlot.getLength();
         rect.set(0,0,l,l);
@@ -625,15 +647,9 @@ public class DrawableManager {
                                 x=itemSlot.getRect().centerX();
                                 y=itemSlot.getRect().centerY();
                                 if(itemSlot.getItem()!=null){
-
                                     rect.set(slot.getRect());
                                     rect.inset((rect.width()-l)/2,((rect.width()-l)/2));
                                     drawItem(canvas,itemSlot.getItem(),rect);
-                                    /*canvas.drawBitmap(itemPaints.get(itemSlot.getItem().getId()), null, rect, null);
-                                    paint.setColor(Color.BLACK);
-                                    paint.setTextSize(ItemSlot.getLength()*0.2f);
-                                    paint.setTextAlign(Paint.Align.RIGHT);
-                                    canvas.drawText(itemSlot.getItem().getNum() + "", rect.right - paint.getTextSize() * 0.2f, rect.bottom - paint.getTextSize() * 0.2f, paint);*/
                                 }
                                 break;
                             }
@@ -642,11 +658,6 @@ public class DrawableManager {
                     drawItem(canvas,item,rect);
                 }
             }
-                /*canvas.drawBitmap(bitmap, null, rect, null);
-                paint.setColor(Color.BLACK);
-                paint.setTextSize(ItemSlot.getLength()*0.2f);
-                paint.setTextAlign(Paint.Align.RIGHT);
-                canvas.drawText(item.getNum() + "", rect.right - paint.getTextSize() * 0.2f, rect.bottom - paint.getTextSize() * 0.2f, paint);*/
 
         }
 
@@ -703,10 +714,10 @@ public class DrawableManager {
         float x,y;
         paint.setColor(Color.BLACK);
         paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(35);
+        paint.setTextSize(Grid.getLength()*0.8f);
         for (int i = 0; i <checks.size(); i++) {
             x=(checks.get(i).x+0.5f)*Grid.getLength()+Player.getMainRect().left;
-            y=(checks.get(i).y+0.85f)*Grid.getLength()+Player.getMainRect().top;
+            y=(checks.get(i).y+0.8f)*Grid.getLength()+Player.getMainRect().top;
             canvas.drawText(i+1+"",x,y,paint);
         }
 

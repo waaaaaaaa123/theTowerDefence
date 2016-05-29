@@ -14,11 +14,13 @@ public class ItemCheckBlock extends Item {
     }
     @Override
     public void setUsable() {
-        usable =false;
-        if(Player.getState()== Player.STATE_PREPARE&&block.getId()== Block.BASE)
+        super.setUsable();
+        if(usable&&Player.getState()== Player.STATE_PREPARE&&block.getId()== Block.BASE)
         {
             usable= true;
         }
+        else
+            usable=false;
     }
 
 

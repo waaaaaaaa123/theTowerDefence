@@ -36,7 +36,7 @@ public class EnemyModifierPoison extends EnemyModifier {
     @Override
     public void onDuring(long dt) {
         int orb=caster.getMainOrb();
-        float d=damagepercent*target.getHp()*dt/1000;
+        float d=damagepercent*target.getHp()*dt/1000.0f;
         target.calDamage(orb,d,caster);
     }
 }

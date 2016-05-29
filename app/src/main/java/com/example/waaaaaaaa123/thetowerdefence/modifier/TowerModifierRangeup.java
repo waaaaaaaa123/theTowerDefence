@@ -6,15 +6,15 @@ import com.example.waaaaaaaa123.thetowerdefence.tower.Tower;
  * Created by aa081_000 on 2016/5/14.
  */
 public class TowerModifierRangeup extends TowerModifier {
-    private float bonus=0;
+    private float bonus;
     public TowerModifierRangeup(Tower target, int stack) {
         super(target, stack);
     }
 
     @Override
     public void recycle(Tower target, int stack) {
-        super.recycle(target, stack);
         bonus=0;
+        super.recycle(target, stack);
     }
 
     @Override
@@ -25,12 +25,12 @@ public class TowerModifierRangeup extends TowerModifier {
     @Override
     public void onStart() {
         bonus=target.getRange();
-        target.attackUp(bonus);
+        target.rangeUp(bonus);
     }
 
     @Override
     public void onEnd() {
-        super.onEnd();
         target.rangeUp(-bonus);
+        super.onEnd();
     }
 }

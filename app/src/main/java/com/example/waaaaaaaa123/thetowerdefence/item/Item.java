@@ -195,6 +195,7 @@ public abstract class Item {
             showRange=true;
         }
         else{
+            block=null;
             usable=false;
             showRange=false;
         }

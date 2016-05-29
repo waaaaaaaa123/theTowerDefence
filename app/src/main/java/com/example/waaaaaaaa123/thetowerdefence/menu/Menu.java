@@ -21,7 +21,7 @@ public class Menu {
     public Menu(){
         float l=Player.mainRect.width();
         rect=new RectF(-l/2,-l/2,l/2,l/2);
-        rect.inset(l*0.1f,-l*0.1f);
+        rect.inset(l * 0.1f, -l * 0.1f);
         rect.offset(Player.mainRect.centerX(),Player.mainRect.centerY());
         buttons=new ArrayList<>(2);
         float left=rect.left,top=rect.top,right=rect.right;
@@ -31,14 +31,17 @@ public class Menu {
         top+=l;
         buttons.add(new ExitButton(new RectF(left,top,right,top+l)));
 
-        state=Player.getState();
-        Player.setState(Player.STATE_PAUSE);
+
     }
 
     public RectF getRect() {
         return rect;
     }
 
+    public void onPause(){
+        state=Player.getState();
+        Player.setState(Player.STATE_PAUSE);
+    }
     public ArrayList<Button> getButtons() {
         return buttons;
     }
