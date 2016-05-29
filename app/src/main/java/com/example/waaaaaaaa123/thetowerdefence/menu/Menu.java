@@ -61,7 +61,7 @@ public class Menu {
 
     public void onNotClick(MotionEvent e) {
         Player.setState(state);
-        if(state!=Player.STATE_FAIL)
+        if(Player.getState()!=Player.STATE_FAIL)
             Player.menu=false;
             //Player.getMenus().pop();
     }
