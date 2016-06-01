@@ -5,6 +5,7 @@ import android.graphics.PointF;
 import com.example.waaaaaaaa123.thetowerdefence.Player;
 import com.example.waaaaaaaa123.thetowerdefence.block.Block;
 import com.example.waaaaaaaa123.thetowerdefence.block.Grid;
+import com.example.waaaaaaaa123.thetowerdefence.button.Button;
 import com.example.waaaaaaaa123.thetowerdefence.dialog.Dialog;
 
 import java.util.ArrayList;
@@ -68,7 +69,9 @@ public class Wave implements Iterable<Enemy> {
                 case Enemy.STATE_DEAD:dead++;break;
             }
         }
+        Player.goButton.setString(id+":"+(enemies.size()-dead));
         if(dead==enemies.size()){
+            Player.goButton.setString("GO!");
             Player.setState(Player.STATE_PREPARE);
             Reward reward=new Reward(id);
             enemies.clear();

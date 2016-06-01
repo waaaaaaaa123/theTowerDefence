@@ -8,7 +8,7 @@ import com.example.waaaaaaaa123.thetowerdefence.tower.Tower;
  */
 public class TowerAbilityMoreSpeed extends TowerAbility {
     private Enemy target=null;
-    private float perBonus=0.1f;
+    private float perBonus=0.5f;
     private float totalBonus=0;
     public TowerAbilityMoreSpeed(Tower caster) {
         super(caster);
@@ -16,18 +16,20 @@ public class TowerAbilityMoreSpeed extends TowerAbility {
 
     @Override
     public void init() {
-        init(ABILITY_TOWER_MORESPEED,STATE_ATTACK,0);
+        init(ABILITY_TOWER_MORESPEED,STATE_FIRED,0);
     }
 
     @Override
     protected boolean cast() {
-        if(caster.getTarget()!=null&&caster.getTarget()==target){
+        if(target==null)
+            target=caster.getTarget();
+        if(target!=null&&target!=caster.getTarget()){
             caster.speedUp(perBonus);
             totalBonus+=perBonus;
         }
         else{
-            caster.speedUp(-totalBonus/2);
-            totalBonus=0/2;
+            caster.speedUp(-totalBonus);
+            totalBonus=0;
         }
         return true;
 

@@ -37,6 +37,8 @@ public class Player {
     private static int hp;
     private static int state;
 
+    public static Button goButton;
+
     public static RectF rect,topRect,mainRect,bottomRect;
 
     public static boolean info=false,menu=false;
@@ -90,10 +92,13 @@ public class Player {
 
 
 
-            bag.addItem(Item.ITEM_BUILDBLOCK,5);
-            bag.addItem(Item.ITEM_REDMUSHROOM,5);
-            bag.addItem(Item.ITEM_ABILITY_STATUSUP, 3);
-            bag.addItem(Item.ITEM_CHECKBLOCK, 3);
+        bag.addItem(Item.ITEM_BUILDBLOCK,5);
+        bag.addItem(Item.ITEM_REDMUSHROOM,5);
+        bag.addItem(Item.ITEM_ABILITY_STATUSUP, 3);
+        bag.addItem(Item.ITEM_CHECKBLOCK, 3);
+        //bag.addItem(Item.ITEM_ABILITY_MOREATTACK,3);
+        //bag.addItem(Item.ITEM_ABILITY_MORESPEED,3);
+        //bag.addItem(Item.ITEM_ABILITY_NETHERTOXIN,3);
 
 
         wave.init();
@@ -103,8 +108,9 @@ public class Player {
         float l=topRect.width()*0.3f;
         RectF r=new RectF(0,0,l,topRect.height()*0.8f);
         buttons.add(new InfoButton(r));
-        r.offset(topRect.centerX()-r.centerX(),0);
-        buttons.add(new Button(r));
+        r.offset(topRect.centerX() - r.centerX(), 0);
+        goButton=new Button(r);
+        buttons.add(goButton);
         r.offset(topRect.right-r.right,0);
         buttons.add(new MenuButton(r));
         dialogs=new Stack<>();

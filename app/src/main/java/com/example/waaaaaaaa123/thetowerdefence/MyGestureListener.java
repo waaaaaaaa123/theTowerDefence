@@ -110,7 +110,7 @@ public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
         }
         if(e.getAction()==MotionEvent.ACTION_UP){
             onUp(e);
-            return true;
+            //return true;
         }
         return false;
     }
@@ -194,50 +194,13 @@ public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
             return true;
         }
 
-        if(Player.getTowerUI().isShow()){
-            TowerUI towerUI=Player.getTowerUI();
-            /*
-            BookButton bookButton=towerUI.getBookButton();
-            if(bookButton.getRect().contains(x,y)){
-                bookButton.onClick();
-                return true;
-            }
-            AbilityBook book=Player.getAbilityBook();
-            if(book.isOpen()){
-                LearnButton learnButton=book.getLearnButton();
-                AbilitySlot slot=book.getSlot(x, y);
-                if(slot!=null)
-                    learnButton.setSlot(slot);
-                if(learnButton.getRect().contains(x,y))
-                    learnButton.onClick();
-                if(!book.getRect().contains(x,y))
-                    bookButton.onClick();
-            }*/
-        }
-        else{
-            /*Shop shop=Player.getShop();
-            ShopButton shopButton=bag.getShopButton();
-            if(shopButton.getRect().contains(x,y)){
-                shopButton.onClick();
-                return true;
-            }
-            if(shop.isOpen()){
-                BuyButton buyButton=shop.getBuyButton();
-                ItemSlot slot=shop.getSlot(x,y);
-                if(slot!=null)
-                    buyButton.setSlot(slot);
-                if(buyButton.getRect().contains(x,y))
-                    buyButton.onClick();
-                if(!shop.getRect().contains(x,y))
-                    shopButton.onClick();
-            }
-*/
-        }
 
         Player.info=false;
         for (Button button : Player.getButtons()) {
-            if (button.getRect().contains(e.getX(0),e.getY(0)))
+            if (button.getRect().contains(e.getX(0),e.getY(0))){
                 button.onClick();
+                break;
+            }
         }
 
         if(!Player.getDialogs().empty()) {

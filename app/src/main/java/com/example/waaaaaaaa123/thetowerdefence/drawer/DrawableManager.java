@@ -229,7 +229,7 @@ public class DrawableManager {
                 paint.setTextSize(rect.height()*0.75f);
                 canvas.drawRect(rect, paint);
                 paint.setColor(Color.BLACK);
-                canvas.drawText(button.getString(),rect.centerX(),rect.bottom-5,paint);
+                canvas.drawText(button.getString(),rect.centerX(),rect.centerY()+paint.getTextSize()*0.5f,paint);
             }
 
     }
@@ -290,15 +290,14 @@ public class DrawableManager {
         canvas.drawText(s,rect.centerX(),rect.bottom - paint.getTextSize() * 0.2f,paint);
     }
     public void drawPlayer(Canvas canvas){
+        drawHpBar(canvas);
+        drawGold(canvas);
+
         Paint paint=new Paint();
         paint.setColor(Color.RED);
         paint.setTextSize(35);
         Paint.FontMetrics fontMetrics=paint.getFontMetrics();
         float f=fontMetrics.bottom-fontMetrics.top;
-        //canvas.drawText("GOLD " + player.getGold(), player.getTopRect().left, player.getTopRect().top + f, paint);
-        //canvas.drawText(" GOLD" + Player.getBag().getGold(), player.getTopRect().left, player.getTopRect().top + f, paint);
-        drawHpBar(canvas);
-        //drawGold(canvas);
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(ItemSlot.getLength()*0.3f);
         for (Button button : Player.getButtons()) {
@@ -310,7 +309,7 @@ public class DrawableManager {
                     canvas.drawRect(button.getRect(), paint);
                     //paint.setColor(Color.WHITE);
                     paint.setStyle(Paint.Style.FILL);
-                    canvas.drawText(button.getString(),button.getRect().centerX(),button.getRect().bottom-paint.getTextSize()*0.3f,paint);
+                    canvas.drawText(button.getString(),button.getRect().centerX(),button.getRect().centerY()+paint.getTextSize()*0.5f,paint);
                     break;
             }
         }
@@ -337,7 +336,7 @@ public class DrawableManager {
     }
 
     public void drawShop(Canvas canvas){
-        drawGold(canvas);
+
         Paint paint=new Paint();
         Bitmap bitmap;
         RectF rect=new RectF();
@@ -542,6 +541,8 @@ public class DrawableManager {
 
             }
         }
+
+        paint.setAlpha(128);
         rect.offsetTo(left + towerUI.getRect().width() / 3, top +v+ fontMetrics.descent+l*1.2f);
         for (TowerModifier towerModifier : tower.getModifiers()) {
             if(towerModifier.isAlive()){
@@ -557,6 +558,7 @@ public class DrawableManager {
             }
         }
 
+        paint.setAlpha(128);
         l=ItemSlot.getLength();
         rect.set(0,0,l,l);
         rect.offsetTo(towerUI.getRect().left + towerUI.getRect().width() / 3, towerUI.getRect().top+towerUI.getRect().height()/2);
